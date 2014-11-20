@@ -1,0 +1,4 @@
+psl
+===
+
+publicsuffixlist for python
