@@ -14,28 +14,29 @@ Usage
 from publicsuffixlist import PublicSuffixList
 
 psl = PublicSuffixList()
+# use PSL file shipped with this package
 
-psl.publicusffix("www.example.com")   # com
+psl.publicusffix("www.example.com")   # "com"
 # longest public suffix part
 
-psl.privatesuffix("www.example.com")  # example.com
+psl.privatesuffix("www.example.com")  # "example.com"
 # shortest domain assigned for a registrant
 
 psl.privatesuffix("com") # None
 # None if no private (non-public) part found
 
 
-psl.publicsuffix("www.example.unknownnewtld") # unkownnewtld
+psl.publicsuffix("www.example.unknownnewtld") # "unkownnewtld"
 # new TLDs are valid public suffix by default
 
-psl.publicsuffix(u"www.example.香港")   # 香港
+psl.publicsuffix(u"www.example.香港")   # u"香港"
 # accept unicode
 
-psl.publicsuffix("www.example.xn--j6w193g") # xn--j6w193g
+psl.publicsuffix("www.example.xn--j6w193g") # "xn--j6w193g"
 # accept punycoded IDNs by default
 ```
 
-Latest PSL file can be passed as a file like object.
+Latest PSL can be passed as a file like line-iterable object.
 ```python
 
 with open("latest_psl.dat", "rb") as f:
