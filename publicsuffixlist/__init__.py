@@ -14,6 +14,10 @@ __all__ = ["PublicSuffixList"]
 
 ENCODING = "utf-8"
 
+PSLURL = "https://publicsuffix.org/list/effective_tld_names.dat"
+
+PSLFILE = os.path.join(os.path.dirname(__file__), "effective_tld_names.dat")
+
 try:
     unicode
     # python 2.x
@@ -49,7 +53,7 @@ class PublicSuffixList(object):
 
         if source == None:
             try:
-                source = open(os.path.join(os.path.dirname(__file__), "effective_tld_names.dat"), "rb")
+                source = open(PSLFILE, "rb")
                 self._parse(source, accept_encoded_idn)
             finally:
                 if source:
