@@ -3,15 +3,21 @@ publicsuffixlist
 
 [Public Suffix List](https://publicsuffix.org/) parser implementation for Python 2.5+/3.x.
 
-- Support IDN (unicode or punycoded).
 - Compliant with [TEST DATA](http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1)
+- Support IDN (unicode or punycoded).
 - Support Python2.5+ and Python 3.x
+- Shipped with built-in PSL and update scripts.
 
 Install
 ===
 `publicsuffixlist` can be installed via `pip` or `pip3`.
 ```
 $ sudo pip install publicsuffixlist
+```
+
+If you are on a bit old destributions (RHEL/CentOS6.x), you may need to update `pip` itself before install.
+```
+$ sudo pip install -U pip
 ```
 
 Usage
@@ -75,6 +81,12 @@ psl.suffix("www.example.com")   # return "example.com"
 psl.suffix("com")               # return ""
 ```
 
+Limitation
+===
+`publicsuffixlist` do NOT provide domain name validation.
+In DNS protocol, most of 8-bit charactors are valid label of domain name. ICANN compliant registries do not accept domain names that have `_` (underscore) but hostname may have. (DMARC records, for example.)
+
+Users need to confirm input is valid based on the users' context.
 
 License
 ===
