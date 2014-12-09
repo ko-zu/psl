@@ -17,9 +17,14 @@ def updatePSL():
     except ImportError:
         raise Exception("Please install python-requests http(s) library. $ sudo pip install requests")
 
+    from email.utils import parsedate
+    import time
+
     r = requests.get(PSLURL)
     if r.status_code != requests.codes.ok or len(r.content) == 0:
         raise Exception("Could not download PSL from " + PSLURL)
+
+    lastmod = r.headers.get("last-modified", None)
 
     f = open(PSLFILE + ".swp", "wb")
     f.write(r.content)
@@ -31,9 +36,13 @@ def updatePSL():
 
     os.rename(PSLFILE + ".swp", PSLFILE)
     
+    if lastmod:
+        t = time.mktime(parsedate(lastmod))
+        os.utime(PSLFILE, (t, t))
+
     print("PSL updated")
-    if "last-modified" in r.headers:
-        print("last-modified: " + r.headers["last-modified"])
+    if lastmod:
+        print("last-modified: " + lastmod)
 
 if __name__ == "__main__":
     updatePSL()
