@@ -7,6 +7,8 @@ publicsuffixlist
 - Support IDN (unicode or punycoded).
 - Support Python2.5+ and Python 3.x
 - Shipped with built-in PSL and update scripts.
+- Written in Pure Python. No library dependencies.
+
 
 Install
 ===
@@ -15,7 +17,7 @@ Install
 $ sudo pip install publicsuffixlist
 ```
 
-If you are on a bit old destributions (RHEL/CentOS6.x), you may need to update `pip` itself before install.
+If you are on a bit old destribution (RHEL/CentOS6.x), you may need to update `pip` itself before install.
 ```
 $ sudo pip install -U pip
 ```
