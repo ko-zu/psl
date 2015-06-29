@@ -14,9 +14,9 @@ __all__ = ["PublicSuffixList"]
 
 ENCODING = "utf-8"
 
-PSLURL = "https://publicsuffix.org/list/effective_tld_names.dat"
+PSLURL = "https://publicsuffix.org/list/public_suffix_list.dat"
 
-PSLFILE = os.path.join(os.path.dirname(__file__), "effective_tld_names.dat")
+PSLFILE = os.path.join(os.path.dirname(__file__), "public_suffix_list.dat")
 
 try:
     unicode

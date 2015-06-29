@@ -14,7 +14,7 @@ setup(name="publicsuffixlist",
       packages=["publicsuffixlist",],
       package_data = {
           "publicsuffixlist": [
-              "effective_tld_names.dat",
+              "public_suffix_list.dat",
               "test_psl.txt",
           ]},
       author="ko-zu",
