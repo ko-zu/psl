@@ -10,7 +10,7 @@ except:
     description = open('README.md').read()
 
 setup(name="publicsuffixlist",
-      version="0.2.10",
+      version="0.2.11",
       packages=["publicsuffixlist",],
       package_data = {
           "publicsuffixlist": [
