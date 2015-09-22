@@ -90,6 +90,9 @@ In DNS protocol, most of 8-bit charactors are valid label of domain name. ICANN 
 
 Users need to confirm input is valid based on the users' context.
 
+Partially encoded (Unicode-mixed) Punycode is not supported because of very slow Punycode en/decoding and unpredictable result encoding.
+If you are not sure the input is valid Punycode or not, use `.encode("idna")` which is idempotence first.
+
 License
 ===
 
