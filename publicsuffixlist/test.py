@@ -166,6 +166,14 @@ invalid
         self.assertEqual(self.psl.privatesuffix(d), "example.com")
 
 
+    def test_flatstring(self):
+        psl = PublicSuffixList(u("com\nnet\n"))
+        self.assertEqual(psl.publicsuffix("example.com"), "com")
+
+    def test_flatbytestring(self):
+        psl = PublicSuffixList(b("com\nnet\n"))
+        self.assertEqual(psl.publicsuffix("example.com"), "com")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -26,6 +26,7 @@ try:
     def b(s):
         return s if isinstance(s, str)     else s.encode(ENCODING)
     basestr = basestring
+    decodablestr = basestring
 
 except:
     def u(s):
@@ -33,6 +34,7 @@ except:
     def b(s):
         return s if isinstance(s, bytes)   else s.encode(ENCODING)
     basestr = str
+    decodablestr = (str, bytes)
 
 
 def encode_idn(domain):
@@ -67,6 +69,9 @@ class PublicSuffixList(object):
         
         publicsuffix = set()
         maxlabel = 0
+
+        if isinstance(source, decodablestr):
+            source = source.splitlines()
 
         ln = 0
         for line in source:
