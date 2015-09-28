@@ -102,7 +102,7 @@ class PublicSuffixList(object):
         if not isinstance(domain, basestr):
             raise TypeError()
 
-        labels = domain.lower().split(".")
+        labels = domain.lower().rsplit(".", self._maxlabel + 2)
         ll = len(labels)
 
         if "\0" in domain or "" in labels:
@@ -156,7 +156,7 @@ class PublicSuffixList(object):
         if not isinstance(domain, basestr):
             raise TypeError()
 
-        labels = domain.lower().split(".")
+        labels = domain.lower().rsplit(".", self._maxlabel + 2)
         ll = len(labels)
 
         if "\0" in domain or "" in labels:

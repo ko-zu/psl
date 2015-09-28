@@ -159,6 +159,11 @@ invalid
         self.assertEqual(psl.get_public_suffix(""), "")
 
 
+    def test_toomanylabels(self):
+        d = "a." * 1000000 + "example.com"
+
+        self.assertEqual(self.psl.publicsuffix(d), "com")
+        self.assertEqual(self.psl.privatesuffix(d), "example.com")
 
 
 
