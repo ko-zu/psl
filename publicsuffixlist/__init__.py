@@ -18,8 +18,16 @@ PSLURL = "https://publicsuffix.org/list/public_suffix_list.dat"
 
 PSLFILE = os.path.join(os.path.dirname(__file__), "public_suffix_list.dat")
 
-try:
-    unicode
+if sys.version_info >= (3, ):
+    # python3.x
+    def u(s):
+        return s if isinstance(s, str)     else s.decode(ENCODING)
+    def b(s):
+        return s if isinstance(s, bytes)   else s.encode(ENCODING)
+    basestr = str
+    decodablestr = (str, bytes)
+
+else:
     # python 2.x
     def u(s):
         return s if isinstance(s, unicode) else s.decode(ENCODING)
@@ -27,14 +35,6 @@ try:
         return s if isinstance(s, str)     else s.encode(ENCODING)
     basestr = basestring
     decodablestr = basestring
-
-except:
-    def u(s):
-        return s if isinstance(s, str)     else s.decode(ENCODING)
-    def b(s):
-        return s if isinstance(s, bytes)   else s.encode(ENCODING)
-    basestr = str
-    decodablestr = (str, bytes)
 
 
 def encode_idn(domain):
