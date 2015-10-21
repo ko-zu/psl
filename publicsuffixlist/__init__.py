@@ -48,8 +48,20 @@ def decode_idn(domain):
 
 
 class PublicSuffixList(object):
+    """ PublicSuffixList parser.
+    
+    After __init__(), all instance methods become thread-safe.
+    Most methods accept str or unicode as input in Python 2.x, str (not bytes) in Python 3.x.
+    """
 
     def __init__(self, source=None, accept_unknown=True, accept_encoded_idn=True):
+        """ Parse PSL source file and Return PSL object
+
+        source: file (line iterable) object, or flat str to parse. (Default: built-in PSL file)
+        accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: True)
+        accept_encoded_idn: bool, if False, do not generate punycoded version of PSL.
+            Without punycoded PSL object, parseing punycoded IDN cause incorrect results. (Default: True)
+        """
 
         self.accept_unknown = accept_unknown
 
@@ -66,7 +78,8 @@ class PublicSuffixList(object):
 
 
     def _parse(self, source, accept_encoded_idn):
-        
+        """ PSL parser core """
+
         publicsuffix = set()
         maxlabel = 0
 
@@ -94,12 +107,19 @@ class PublicSuffixList(object):
 
 
     def suffix(self, domain, accept_unknown=None):
-        """ alias for privatesuffix """
+        """ Alias for privatesuffix """
         return self.privatesuffix(domain, accept_unknown)
 
 
     def privatesuffix(self, domain, accept_unknown=None):
-        """ return shortest suffix assigned for an individual """
+        """ Return shortest suffix assigned for an individual.
+        
+        domain: str or unicode to parse. (Required)
+        accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
+
+        Return None if domain has invalid format.
+        Return None if domain has no private part.
+        """
 
         if accept_unknown == None:
             accept_unknown = self.accept_unknown
@@ -114,11 +134,11 @@ class PublicSuffixList(object):
             # not a valid domain
             return None
         
-        if ll < 2:
+        if ll <= 1:
             # is TLD
             return None
 
-        # skip longer match
+        # skip labels longer than rules
         for i in range(max(0, ll - self._maxlabel), ll):
             s = ".".join(labels[i:])
 
@@ -126,7 +146,7 @@ class PublicSuffixList(object):
                 return ".".join(labels[i-1:])
 
             if ("!" + s) in self._publicsuffix:
-                # exact match
+                # exact private match
                 return s
 
             if i > 0 and ("*." + s) in self._publicsuffix:
@@ -151,9 +171,15 @@ class PublicSuffixList(object):
                 return None
 
 
-
     def publicsuffix(self, domain, accept_unknown=None):
-        """ return longest public suffix """
+        """ Return longest publically shared suffix.
+        
+        domain: str or unicode to parse. (Required)
+        accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
+
+        Return None if domain has invalid format.
+        Return None if domain is not listed in PSL and accept_unknown is False.
+        """
 
         if accept_unknown == None:
             accept_unknown = self.accept_unknown
@@ -175,7 +201,7 @@ class PublicSuffixList(object):
             else:
                 return None
 
-        # skip longer match
+        # skip labels longer than rules
         for i in range(max(0, ll - self._maxlabel), ll):
             s = ".".join(labels[i:])
 
@@ -204,10 +230,12 @@ class PublicSuffixList(object):
 
 
     def is_private(self, domain):
+        """ Return True if domain is private suffix or sub-domain. """
         return self.suffix(domain) != None
 
 
     def is_public(self, domain):
+        """ Return True if domain is publix suffix. """
         return self.publicsuffix(domain) == domain
 
 
