@@ -9,6 +9,7 @@ publicsuffixlist
 - Shipped with built-in PSL and update scripts.
 - Written in Pure Python. No library dependencies.
 
+[![Build Status](https://travis-ci.org/ko-zu/psl.svg?branch=master)](https://travis-ci.org/ko-zu/psl)
 
 Install
 ===
