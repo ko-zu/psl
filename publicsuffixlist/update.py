@@ -8,10 +8,16 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
-import os,sys,re
+import os
+
 from publicsuffixlist import PSLURL, PSLFILE, PublicSuffixList
 
-def updatePSL():
+
+def updatePSL(psl_file=PSLFILE):
+    """ Updates a local copy of PSL file
+
+    :param psl_file: path for the file to store the list. Default: PSLFILE
+    """
     try:
         import requests
     except ImportError:
@@ -25,25 +31,23 @@ def updatePSL():
         raise Exception("Could not download PSL from " + PSLURL)
 
     lastmod = r.headers.get("last-modified", None)
-
-    f = open(PSLFILE + ".swp", "wb")
+    f = open(psl_file + ".swp", "wb")
     f.write(r.content)
     f.close()
 
-    f = open(PSLFILE + ".swp", "rb")
+    f = open(psl_file + ".swp", "rb")
     psl = PublicSuffixList(f)
     f.close()
 
-    os.rename(PSLFILE + ".swp", PSLFILE)
-    
+    os.rename(psl_file + ".swp", psl_file)
     if lastmod:
         t = time.mktime(parsedate(lastmod))
-        os.utime(PSLFILE, (t, t))
+        os.utime(psl_file, (t, t))
 
     print("PSL updated")
     if lastmod:
         print("last-modified: " + lastmod)
 
+
 if __name__ == "__main__":
     updatePSL()
-
