@@ -31,7 +31,7 @@ def updatePSL(psl_file=PSLFILE):
         raise Exception("Could not download PSL from " + PSLURL)
 
     lastmod = r.headers.get("last-modified", None)
-    f = open(psl_file + ".swp", "xb")
+    f = open(psl_file + ".swp", "wb")
     f.write(r.content)
     f.close()
 
