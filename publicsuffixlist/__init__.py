@@ -239,3 +239,25 @@ class PublicSuffixList(object):
         return self.publicsuffix(domain) == domain
 
 
+    def privateparts(self, domain):
+        """ Return tuple of labels and the private suffix. """
+        s = self.privatesuffix(domain)
+        if s == None:
+            return None
+        else:
+            # I know the domain is valid and ends with private suffix
+            pre = domain[0:-(len(s)+1)]
+            if pre == "":
+                return (s,)
+            else:
+                return tuple(pre.split(".") + [s])
+
+
+    def subdomain(self, domain, depth):
+        """ Return so-called subdomain of specified depth in the private suffix. """
+        p = self.privateparts(domain)
+        if p == None or depth > len(p) - 1:
+            return None
+        else:
+            return ".".join(p[-(depth+1):])
+

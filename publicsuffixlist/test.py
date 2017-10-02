@@ -175,8 +175,28 @@ invalid
         self.assertEqual(psl.publicsuffix("example.com"), "com")
 
 
+    def test_privateparts(self):
+        psl = self.psl
+        self.assertEqual(psl.privateparts("aaa.www.example.com"), ("aaa", "www", "example.com"))
+
+    def test_noprivateparts(self):
+        psl = self.psl
+        self.assertEqual(psl.privateparts("com"), None) # no private part
+
+    def test_reconstructparts(self):
+        psl = self.psl
+        self.assertEqual(".".join(psl.privateparts("aaa.www.example.com")), "aaa.www.example.com")
+
+
+    def test_subdomain(self):
+        psl = self.psl
+        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=0), "example.com")
+        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=1), "www.example.com")
+        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=2), "aaa.www.example.com")
+        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=3), None) # no sufficient depth
+
+
 if __name__ == "__main__":
     unittest.main()
 
 
-    
