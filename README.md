@@ -6,7 +6,7 @@ publicsuffixlist
 - Compliant with [TEST DATA](http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1)
 - Support IDN (unicode or punycoded).
 - Support Python2.5+ and Python 3.x
-- Shipped with built-in PSL and update scripts.
+- Shipped with built-in PSL and the updater script.
 - Written in Pure Python. No library dependencies.
 
 [![Build Status](https://travis-ci.org/ko-zu/psl.svg?branch=master)](https://travis-ci.org/ko-zu/psl)
@@ -18,7 +18,7 @@ Install
 $ sudo pip install publicsuffixlist
 ```
 
-If you are on a bit old destribution (RHEL/CentOS6.x), you may need to update `pip` itself before install.
+If you are in a bit old distributions (RHEL/CentOS6.x), you may need to update `pip` itself before install.
 ```
 $ sudo pip install -U pip
 ```
@@ -61,38 +61,36 @@ with open("latest_psl.dat", "rb") as f:
 Works with both Python 2.x and 3.x.
 ```
 $ python -m publicsuffixlist.test
-...............
-----------------------------------------------------------------------
-Ran 15 tests in 2.898s
-
-OK
 $ python3 -m publicsuffixlist.test
-...............
-----------------------------------------------------------------------
-Ran 15 tests in 2.562s
-
-OK
 ```
 
-Drop-in compat code to replace [publicsuffix](https://pypi.python.org/pypi/publicsuffix/)
+Drop-in compatibility code to replace [publicsuffix](https://pypi.python.org/pypi/publicsuffix/)
 ```python
 # from publicsuffix import PublicSuffixList
 from publicsuffixlist.compat import PublicSuffixList
 
 psl = PublicSuffixList()
 psl.suffix("www.example.com")   # return "example.com"
-psl.suffix("com")               # return ""
+psl.suffix("com")               # return "" rather than None
 ```
+
+Some convenient methods available.
+```python
+psl.is_private("example.com")  # True
+psl.privateparts("aaa.www.example.com") # ("aaa", "www", "example.com")
+psl.subdomain("aaa.www.example.com", depth=1) # "www.example.com"
+```
+
 
 Limitation
 ===
 `publicsuffixlist` do NOT provide domain name validation.
-In DNS protocol, most of 8-bit charactors are valid label of domain name. ICANN compliant registries do not accept domain names that have `_` (underscore) but hostname may have. (DMARC records, for example.)
+In DNS protocol, most of 8-bit characters are acceptable label of domain name. ICANN compliant registries do not accept domain names that have `_` (underscore) but hostname may have. DMARC records, for example.
 
-Users need to confirm input is valid based on the users' context.
+Users need to confirm the input is valid based on the users' context.
 
-Partially encoded (Unicode-mixed) Punycode is not supported because of very slow Punycode en/decoding and unpredictable result encoding.
-If you are not sure the input is valid Punycode or not, use `.encode("idna")` which is idempotence first.
+Partially encoded (Unicode-mixed) Punycode is not supported because of very slow Punycode en/decoding and unpredictable encoding of results.
+If you are not sure the input is valid Punycode or not, you should do `unknowndomain.encode("idna")` which is idempotence.
 
 License
 ===
@@ -107,5 +105,3 @@ Source / Link
 
 - Git repository on GitHub (https://github.com/ko-zu/psl)
 - PyPI (https://pypi.python.org/pypi?name=publicsuffixlist&:action=display)
-
-
