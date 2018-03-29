@@ -32,4 +32,14 @@ setup(name="publicsuffixlist",
           "Operating System :: OS Independent",
 
         ],
+      extras_require={
+          "update": ["requests"],
+          "readme": ["pandoc"],
+        },
+      entry_points={
+          "console_scripts": [
+              "publicsuffixlist-download = publicsuffixlist.update:updatePSL",
+          ]},
+      test_suite="publicsuffixlist.test",
+      license='MPL-2.0',
       )
