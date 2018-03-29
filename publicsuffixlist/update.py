@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 ko-zu <causeless@gmail.com>
@@ -9,8 +8,15 @@
 #
 
 import os
+import time
+from email.utils import parsedate
 
-from publicsuffixlist import PSLURL, PSLFILE, PublicSuffixList
+from publicsuffixlist import PSLFILE, PSLURL, PublicSuffixList
+
+try:
+    import requests
+except ImportError:
+    requests = None
 
 
 def updatePSL(psl_file=PSLFILE):
@@ -18,13 +24,9 @@ def updatePSL(psl_file=PSLFILE):
 
     :param psl_file: path for the file to store the list. Default: PSLFILE
     """
-    try:
-        import requests
-    except ImportError:
+    if requests is None:
         raise Exception("Please install python-requests http(s) library. $ sudo pip install requests")
 
-    from email.utils import parsedate
-    import time
 
     r = requests.get(PSLURL)
     if r.status_code != requests.codes.ok or len(r.content) == 0:
@@ -35,9 +37,8 @@ def updatePSL(psl_file=PSLFILE):
     f.write(r.content)
     f.close()
 
-    f = open(psl_file + ".swp", "rb")
-    psl = PublicSuffixList(f)
-    f.close()
+    with open(psl_file + ".swp", "rb") as f:
+        psl = PublicSuffixList(f)
 
     os.rename(psl_file + ".swp", psl_file)
     if lastmod:
