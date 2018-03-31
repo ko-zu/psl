@@ -60,8 +60,8 @@ with open("latest_psl.dat", "rb") as f:
 
 Works with both Python 2.x and 3.x.
 ```
-$ python -m publicsuffixlist.test
-$ python3 -m publicsuffixlist.test
+$ python2 setup.py test
+$ python3 setup.py test
 ```
 
 Drop-in compatibility code to replace [publicsuffix](https://pypi.python.org/pypi/publicsuffix/)

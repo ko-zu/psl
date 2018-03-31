@@ -3,7 +3,7 @@
 
 import codecs
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 try:
     import pypandoc
@@ -13,8 +13,8 @@ except:
 
 setup(name="publicsuffixlist",
       version="0.5.0",
-      packages=["publicsuffixlist",],
-      package_data = {
+      packages=["publicsuffixlist"],
+      package_data={
           "publicsuffixlist": [
               "public_suffix_list.dat",
               "test_psl.txt",
@@ -30,6 +30,16 @@ setup(name="publicsuffixlist",
           "Topic :: Internet :: Name Service (DNS)",
           "Topic :: Text Processing :: Filters",
           "Operating System :: OS Independent",
-          
+
         ],
+      extras_require={
+          "update": ["requests"],
+          "readme": ["pandoc"],
+        },
+      entry_points={
+          "console_scripts": [
+              "publicsuffixlist-download = publicsuffixlist.update:updatePSL",
+          ]},
+      test_suite="publicsuffixlist.test",
+      license='MPL-2.0',
       )
