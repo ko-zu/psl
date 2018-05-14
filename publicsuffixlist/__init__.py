@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 ko-zu <causeless@gmail.com>
@@ -8,7 +7,8 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
 
-import os,sys
+import os
+import sys
 
 __all__ = ["PublicSuffixList"]
 
@@ -21,9 +21,10 @@ PSLFILE = os.path.join(os.path.dirname(__file__), "public_suffix_list.dat")
 if sys.version_info >= (3, ):
     # python3.x
     def u(s):
-        return s if isinstance(s, str)     else s.decode(ENCODING)
+        return s if isinstance(s, str) else s.decode(ENCODING)
+
     def b(s):
-        return s if isinstance(s, bytes)   else s.encode(ENCODING)
+        return s if isinstance(s, bytes) else s.encode(ENCODING)
     basestr = str
     decodablestr = (str, bytes)
 
@@ -32,7 +33,7 @@ else:
     def u(s):
         return s if isinstance(s, unicode) else s.decode(ENCODING)
     def b(s):
-        return s if isinstance(s, str)     else s.encode(ENCODING)
+        return s if isinstance(s, str) else s.encode(ENCODING)
     basestr = basestring
     decodablestr = basestring
 
@@ -45,11 +46,9 @@ def decode_idn(domain):
     return b(domain).decode("idna")
 
 
-
-
 class PublicSuffixList(object):
     """ PublicSuffixList parser.
-    
+
     After __init__(), all instance methods become thread-safe.
     Most methods accept str or unicode as input in Python 2.x, str (not bytes) in Python 3.x.
     """
@@ -65,17 +64,15 @@ class PublicSuffixList(object):
 
         self.accept_unknown = accept_unknown
 
-        if source == None:
+        if source is None:
             try:
                 source = open(PSLFILE, "rb")
                 self._parse(source, accept_encoded_idn)
             finally:
                 if source:
                     source.close()
-        else:    
+        else:
             self._parse(source, accept_encoded_idn)
-
-
 
     def _parse(self, source, accept_encoded_idn):
         """ PSL parser core """
@@ -105,15 +102,13 @@ class PublicSuffixList(object):
         self._publicsuffix = frozenset(publicsuffix)
         self._maxlabel = maxlabel
 
-
     def suffix(self, domain, accept_unknown=None):
         """ Alias for privatesuffix """
         return self.privatesuffix(domain, accept_unknown)
 
-
     def privatesuffix(self, domain, accept_unknown=None):
         """ Return shortest suffix assigned for an individual.
-        
+
         domain: str or unicode to parse. (Required)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
 
@@ -121,7 +116,7 @@ class PublicSuffixList(object):
         Return None if domain has no private part.
         """
 
-        if accept_unknown == None:
+        if accept_unknown is None:
             accept_unknown = self.accept_unknown
 
         if not isinstance(domain, basestr):
@@ -133,7 +128,7 @@ class PublicSuffixList(object):
         if "\0" in domain or "" in labels:
             # not a valid domain
             return None
-        
+
         if ll <= 1:
             # is TLD
             return None
@@ -170,10 +165,9 @@ class PublicSuffixList(object):
             else:
                 return None
 
-
     def publicsuffix(self, domain, accept_unknown=None):
         """ Return longest publically shared suffix.
-        
+
         domain: str or unicode to parse. (Required)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
 
@@ -181,7 +175,7 @@ class PublicSuffixList(object):
         Return None if domain is not listed in PSL and accept_unknown is False.
         """
 
-        if accept_unknown == None:
+        if accept_unknown is None:
             accept_unknown = self.accept_unknown
 
         if not isinstance(domain, basestr):
@@ -207,14 +201,14 @@ class PublicSuffixList(object):
 
             if i > 0 and ("!*." + s) in self._publicsuffix:
                 return s
-    
+
             if ("!" + s) in self._publicsuffix:
                 # exact exclude
                 if i + 1 < ll:
                     return ".".join(labels[i+1:])
                 else:
                     return None
-            
+
             if i > 0 and ("*." + s) in self._publicsuffix:
                 return ".".join(labels[i-1:])
 
@@ -228,21 +222,18 @@ class PublicSuffixList(object):
             else:
                 return None
 
-
     def is_private(self, domain):
         """ Return True if domain is private suffix or sub-domain. """
-        return self.suffix(domain) != None
-
+        return self.suffix(domain) is not None
 
     def is_public(self, domain):
         """ Return True if domain is publix suffix. """
         return self.publicsuffix(domain) == domain
 
-
     def privateparts(self, domain):
         """ Return tuple of labels and the private suffix. """
         s = self.privatesuffix(domain)
-        if s == None:
+        if s is None:
             return None
         else:
             # I know the domain is valid and ends with private suffix
@@ -252,12 +243,10 @@ class PublicSuffixList(object):
             else:
                 return tuple(pre.split(".") + [s])
 
-
     def subdomain(self, domain, depth):
         """ Return so-called subdomain of specified depth in the private suffix. """
         p = self.privateparts(domain)
-        if p == None or depth > len(p) - 1:
+        if p is None or depth > len(p) - 1:
             return None
         else:
             return ".".join(p[-(depth+1):])
-

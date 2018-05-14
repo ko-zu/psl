@@ -1,18 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+import codecs
+
+from setuptools import setup
 
 try:
     import pypandoc
     description = pypandoc.convert('README.md', 'rst')
 except:
-    description = open('README.md').read()
+    description = codecs.open('README.md', encoding='utf-8').read()
 
 setup(name="publicsuffixlist",
-      version="0.5.0",
-      packages=["publicsuffixlist",],
-      package_data = {
+      version="0.5.1",
+      packages=["publicsuffixlist"],
+      package_data={
           "publicsuffixlist": [
               "public_suffix_list.dat",
               "test_psl.txt",
@@ -28,8 +30,16 @@ setup(name="publicsuffixlist",
           "Topic :: Internet :: Name Service (DNS)",
           "Topic :: Text Processing :: Filters",
           "Operating System :: OS Independent",
-          
+
         ],
+      extras_require={
+          "update": ["requests"],
+          "readme": ["pandoc"],
+        },
+      entry_points={
+          "console_scripts": [
+              "publicsuffixlist-download = publicsuffixlist.update:updatePSL",
+          ]},
+      test_suite="publicsuffixlist.test",
+      license='MPL-2.0',
       )
-
-

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 ko-zu <causeless@gmail.com>
@@ -9,10 +8,10 @@
 #
 
 
-import os,sys,re
 from publicsuffixlist import PublicSuffixList as PSL
 
 __all__ = ["PublicSuffixList"]
+
 
 class PublicSuffixList(PSL):
     """ Drop in compatibility class to emulate publicsuffix module. """
@@ -30,4 +29,3 @@ class UnsafePublicSuffixList(PSL):
         """ Return shortest private suffix or longest public suffix. """
 
         return self.suffix(domain) or self.publicsuffix(domain) or ""
-
