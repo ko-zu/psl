@@ -53,13 +53,17 @@ class PublicSuffixList(object):
     Most methods accept str or unicode as input in Python 2.x, str (not bytes) in Python 3.x.
     """
 
-    def __init__(self, source=None, accept_unknown=True, accept_encoded_idn=True):
+    def __init__(self, source=None, accept_unknown=True, accept_encoded_idn=True,
+                 only_icann=False):
         """ Parse PSL source file and Return PSL object
 
         source: file (line iterable) object, or flat str to parse. (Default: built-in PSL file)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: True)
         accept_encoded_idn: bool, if False, do not generate punycoded version of PSL.
             Without punycoded PSL object, parseing punycoded IDN cause incorrect results. (Default: True)
+        only_icann: bool, if True, only ICANN suffixes are honored, not private ones.
+            The markers '// ===BEGIN ICANN DOMAINS===' and '// ===END ICANN DOMAINS==='
+            are needed for ICANN section detection. (Default: False)
         """
 
         self.accept_unknown = accept_unknown
@@ -67,18 +71,19 @@ class PublicSuffixList(object):
         if source is None:
             try:
                 source = open(PSLFILE, "rb")
-                self._parse(source, accept_encoded_idn)
+                self._parse(source, accept_encoded_idn, only_icann=only_icann)
             finally:
                 if source:
                     source.close()
         else:
-            self._parse(source, accept_encoded_idn)
+            self._parse(source, accept_encoded_idn, only_icann=only_icann)
 
-    def _parse(self, source, accept_encoded_idn):
+    def _parse(self, source, accept_encoded_idn, only_icann=False):
         """ PSL parser core """
 
         publicsuffix = set()
         maxlabel = 0
+        section_is_icann = None
 
         if isinstance(source, decodablestr):
             source = source.splitlines()
@@ -86,6 +91,15 @@ class PublicSuffixList(object):
         ln = 0
         for line in source:
             ln += 1
+            line = line.strip()
+            if only_icann and line == b'// ===BEGIN ICANN DOMAINS===':
+                section_is_icann = True
+                continue
+            elif only_icann and line == b'// ===END ICANN DOMAINS===':
+                break
+            if only_icann and not section_is_icann:
+                continue
+
             s = u(line).lower().split(" ")[0].rstrip()
             if s == "" or s.startswith("//"):
                 continue

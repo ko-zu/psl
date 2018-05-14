@@ -92,6 +92,18 @@ Users need to confirm the input is valid based on the users' context.
 Partially encoded (Unicode-mixed) Punycode is not supported because of very slow Punycode en/decoding and unpredictable encoding of results.
 If you are not sure the input is valid Punycode or not, you should do `unknowndomain.encode("idna")` which is idempotence.
 
+ICANN and private suffixes
+===
+The public suffix list contains both suffixes for ICANN domains and private suffixes. Using the flag `only_icann` the private suffixes can be deactivated:
+```
+>>> psl = PublicSuffixList()
+>>> psl.publicsuffix("example.priv.at")
+'priv.at'
+>>> psl = PublicSuffixList(only_icann=True)
+>>> psl.publicsuffix("example.priv.at")
+'at'
+```
+
 License
 ===
 
