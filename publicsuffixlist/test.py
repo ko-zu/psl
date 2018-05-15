@@ -175,5 +175,13 @@ invalid
         self.assertEqual(psl.subdomain("aaa.www.example.com", depth=3), None)  # no sufficient depth
 
 
+class TestPSLSections(unittest.TestCase):
+
+    def test_icann(self):
+        psl = PublicSuffixList(only_icann=True)
+        self.assertEqual(psl.publicsuffix("www.example.com"), 'com')
+        self.assertEqual(psl.publicsuffix("example.priv.at"), 'at')
+
+
 if __name__ == "__main__":
     unittest.main()
