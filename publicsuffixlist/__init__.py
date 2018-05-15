@@ -91,14 +91,16 @@ class PublicSuffixList(object):
         ln = 0
         for line in source:
             ln += 1
-            line = line.strip()
-            if only_icann and line == b'// ===BEGIN ICANN DOMAINS===':
-                section_is_icann = True
-                continue
-            elif only_icann and line == b'// ===END ICANN DOMAINS===':
-                break
-            if only_icann and not section_is_icann:
-                continue
+            if only_icann:
+                ul = u(line).rstrip()
+                if ul == "// ===BEGIN ICANN DOMAINS===":
+                    section_is_icann = True
+                    continue
+                elif ul == "// ===END ICANN DOMAINS===":
+                    section_is_icann = False
+                    continue
+                if not section_is_icann:
+                    continue
 
             s = u(line).lower().split(" ")[0].rstrip()
             if s == "" or s.startswith("//"):
