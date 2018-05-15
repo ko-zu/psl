@@ -12,7 +12,7 @@ except:
     description = codecs.open('README.md', encoding='utf-8').read()
 
 setup(name="publicsuffixlist",
-      version="0.5.1",
+      version="0.6.0",
       packages=["publicsuffixlist"],
       package_data={
           "publicsuffixlist": [
