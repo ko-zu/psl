@@ -10,6 +10,8 @@ publicsuffixlist
 - Written in Pure Python. No library dependencies.
 
 [![Build Status](https://travis-ci.org/ko-zu/psl.svg?branch=master)](https://travis-ci.org/ko-zu/psl)
+[![PyPI version](https://badge.fury.io/py/publicsuffixlist.svg)](https://badge.fury.io/py/publicsuffixlist)
+[![Downloads](http://pepy.tech/badge/publicsuffixlist)](http://pepy.tech/project/publicsuffixlist)
 
 Install
 ===
