@@ -79,7 +79,6 @@ exchange.aero
 express.aero
 federation.aero
 flight.aero
-freight.aero
 fuel.aero
 gliding.aero
 government.aero
@@ -213,6 +212,7 @@ ac.at
 co.at
 gv.at
 or.at
+sth.ac.at
 
 // au : https://en.wikipedia.org/wiki/.au
 // http://www.auda.org.au/
@@ -719,11 +719,13 @@ gouv.ci
 *.ck
 !www.ck
 
-// cl : https://en.wikipedia.org/wiki/.cl
+// cl : https://www.nic.cl
+// Confirmed by .CL registry <hsalgado@nic.cl>
 cl
-gov.cl
-gob.cl
+aprendemas.cl
 co.cl
+gob.cl
+gov.cl
 mil.cl
 
 // cm : https://en.wikipedia.org/wiki/.cm plus bug 981927
@@ -6519,7 +6521,7 @@ k12.ok.us
 k12.or.us
 k12.pa.us
 k12.pr.us
-k12.ri.us
+// k12.ri.us  Removed at request of Kim Cournoyer <netsupport@staff.ri.net>
 k12.sc.us
 // k12.sd.us  Bug 934131 - Removed at request of James Booze <James.Booze@k12.sd.us>
 k12.tn.us
@@ -7090,7 +7092,7 @@ org.zw
 
 // newGTLDs
 
-// List of new gTLDs imported from https://www.icann.org/resources/registries/gtlds/v2/gtlds.json on 2020-03-09T20:44:27Z
+// List of new gTLDs imported from https://www.icann.org/resources/registries/gtlds/v2/gtlds.json on 2020-05-06T16:23:34Z
 // This list is auto-generated, don't edit it manually.
 // aaa : 2015-02-26 American Automobile Association, Inc.
 aaa
@@ -7239,7 +7241,7 @@ analytics
 // android : 2014-08-07 Charleston Road Registry Inc.
 android
 
-// anquan : 2015-01-08 QIHOO 360 TECHNOLOGY CO. LTD.
+// anquan : 2015-01-08 Beijing Qihu Keji Co., Ltd.
 anquan
 
 // anz : 2015-07-31 Australia and New Zealand Banking Group Limited
@@ -9093,9 +9095,6 @@ mutual
 // nab : 2015-08-20 National Australia Bank Limited
 nab
 
-// nadex : 2014-12-11 Nadex Domains, Inc.
-nadex
-
 // nagoya : 2013-10-24 GMO Registry, Inc.
 nagoya
 
@@ -9750,7 +9749,7 @@ shop
 // shopping : 2016-03-31 Binky Moon, LLC
 shopping
 
-// shouji : 2015-01-08 QIHOO 360 TECHNOLOGY CO. LTD.
+// shouji : 2015-01-08 Beijing Qihu Keji Co., Ltd.
 shouji
 
 // show : 2015-03-05 Binky Moon, LLC
@@ -10173,9 +10172,6 @@ visa
 // vision : 2013-12-05 Binky Moon, LLC
 vision
 
-// vistaprint : 2014-09-18 Vistaprint Limited
-vistaprint
-
 // viva : 2014-11-07 Saudi Telecom Company
 viva
 
@@ -10317,7 +10313,7 @@ xerox
 // xfinity : 2015-07-09 Comcast IP Holdings I, LLC
 xfinity
 
-// xihuan : 2015-01-08 QIHOO 360 TECHNOLOGY CO. LTD.
+// xihuan : 2015-01-08 Beijing Qihu Keji Co., Ltd.
 xihuan
 
 // xin : 2014-12-11 Elegant Leader Limited
@@ -10353,7 +10349,7 @@ xin
 // xn--45q11c : 2013-11-21 Zodiac Gemini Ltd
 八卦
 
-// xn--4gbrim : 2013-10-04 Suhub Electronic Establishment
+// xn--4gbrim : 2013-10-04 Fans TLD Limited
 موقع
 
 // xn--55qw42g : 2013-11-08 China Organizational Name Administration Center
@@ -10436,9 +10432,6 @@ xin
 
 // xn--efvy88h : 2014-08-22 Guangzhou YU Wei Information Technology Co., Ltd.
 新闻
-
-// xn--estv75g : 2015-02-19 Industrial and Commercial Bank of China Limited
-工行
 
 // xn--fct429k : 2015-04-09 Amazon Registry Services, Inc.
 家電
@@ -10641,7 +10634,7 @@ you
 // youtube : 2014-05-01 Charleston Road Registry Inc.
 youtube
 
-// yun : 2015-01-08 QIHOO 360 TECHNOLOGY CO. LTD.
+// yun : 2015-01-08 Beijing Qihu Keji Co., Ltd.
 yun
 
 // zappos : 2015-06-25 Amazon Registry Services, Inc.
@@ -10987,6 +10980,10 @@ cleverapps.io
 *.lcl.dev
 *.stg.dev
 
+// Clic2000 : https://clic2000.fr
+// Submitted by Mathilde Blanchemanche <mathilde@clic2000.fr>
+clic2000.net
+
 // Cloud66 : https://www.cloud66.com/
 // Submitted by Khash Sajadi <khash@cloud66.com>
 c66.me
@@ -11102,6 +11099,10 @@ realm.cz
 // Submitted by Jonathan Rudenberg <jonathan@cupcake.io>
 cupcake.is
 
+// Curv UG : https://curv-labs.de/
+// Submitted by Marvin Wiesner <Marvin@curv-labs.de>
+curv.dev
+
 // Customer OCI - Oracle Dyn https://cloud.oracle.com/home https://dyn.com/dns/
 // Submitted by Gregory Drake <support@dyn.com>
 // Note: This is intended to also include customer-oci.com due to wildcards implicitly including the current label
@@ -11136,6 +11137,10 @@ co.dk
 firm.dk
 reg.dk
 store.dk
+
+// dappnode.io : https://dappnode.io/
+// Submitted by Abel Boldu / DAppNode Team <community@dappnode.io>
+dyndns.dappnode.io
 
 // dapps.earth : https://dapps.earth/
 // Submitted by Daniil Burdakov <icqkill@gmail.com>
@@ -11619,6 +11624,10 @@ twmail.org
 mymailer.com.tw
 url.tw
 
+// Fabrica Technologies, Inc. : https://www.fabrica.dev/
+// Submitted by Eric Jiang <eric@fabrica.dev>
+onfabrica.com
+
 // Facebook, Inc.
 // Submitted by Peter Ruibal <public-suffix@fb.com>
 apps.fbsbx.com
@@ -11721,6 +11730,10 @@ global.ssl.fastly.net
 // Submitted by Likhachev Vasiliy <lihachev@fastvps.ru>
 fastpanel.direct
 fastvps-server.com
+myfast.space
+myfast.host
+fastvps.site
+fastvps.host
 
 // Featherhead : https://featherhead.xyz/
 // Submitted by Simon Menke <simon@featherhead.xyz>
@@ -11733,6 +11746,13 @@ fedorapeople.org
 cloud.fedoraproject.org
 app.os.fedoraproject.org
 app.os.stg.fedoraproject.org
+
+// FearWorks Media Ltd. : https://fearworksmedia.co.uk
+// submitted by Keith Fairley <domains@fearworksmedia.co.uk>
+conn.uk
+copro.uk
+couk.me
+ukco.me
 
 // Fermax : https://fermax.com/
 // submitted by Koen Van Isterdael <k.vanisterdael@fermax.be>
@@ -11754,7 +11774,6 @@ firebaseapp.com
 
 // Flynn : https://flynn.io
 // Submitted by Jonathan Rudenberg <jonathan@flynn.io>
-flynnhub.com
 flynnhosting.net
 
 // Frederik Braun https://frederik-braun.com
@@ -11926,6 +11945,10 @@ publishproxy.com
 withgoogle.com
 withyoutube.com
 
+// Aaron Marais' Gitlab pages: https://lab.aaronleem.co.za
+// Submitted by Aaron Marais <its_me@aaronleem.co.za>
+graphox.us
+
 // Group 53, LLC : https://www.group53.com
 // Submitted by Tyler Todd <noc@nova53.net>
 awsmppl.com
@@ -12056,8 +12079,9 @@ pixolino.com
 ipifony.net
 
 // IServ GmbH : https://iserv.eu
-// Submitted by Kim-Alexander Brodowski <kim.brodowski@iserv.eu>
+// Submitted by Kim-Alexander Brodowski <info@iserv.eu>
 mein-iserv.de
+schulserver.de
 test-iserv.de
 iserv.dev
 
@@ -12243,8 +12267,8 @@ eu.meteorapp.com
 co.pl
 
 // Microsoft Corporation : http://microsoft.com
-// Submitted by Justin Luk <juluk@microsoft.com>
-azurecontainer.io
+// Submitted by Mostafa Elzeiny <moelzein@microsoft.com>
+*.azurecontainer.io
 azurewebsites.net
 azure-mobile.net
 cloudapp.net
@@ -12290,6 +12314,7 @@ nctu.me
 // Netlify : https://www.netlify.com
 // Submitted by Jessica Parsons <jessica@netlify.com>
 bitballoon.com
+netlify.app
 netlify.com
 
 // Neustar Inc.
@@ -12447,12 +12472,13 @@ pcloud.host
 nyc.mn
 
 // NymNom : https://nymnom.com/
-// Submitted by Dave McCormack <dave.mccormack@nymnom.com>
+// Submitted by NymNom <psl@nymnom.com>
 nom.ae
 nom.af
 nom.ai
 nom.al
 nym.by
+nom.bz
 nym.bz
 nom.cl
 nym.ec
@@ -12474,6 +12500,7 @@ nom.li
 nym.li
 nym.lt
 nym.lu
+nom.lv
 nym.me
 nom.mk
 nym.mn
@@ -12580,6 +12607,12 @@ on-web.fr
 // Submitted by Nikola Kotur <nikola@platform.sh>
 *.platform.sh
 *.platformsh.site
+
+// Platter: https://platter.dev
+// Submitted by Patrick Flor <patrick@platter.dev>
+platter-app.com
+platter-app.dev
+platterp.us
 
 // Port53 : https://port53.io/
 // Submitted by Maximilian Schieder <maxi@zeug.co>
@@ -12762,6 +12795,10 @@ myshopblocks.com
 // Submitted by Craig McMahon <craig@shopitcommerce.com>
 shopitsite.com
 
+// shopware AG : https://shopware.com
+// Submitted by Jens Küper <cloud@shopware.com>
+shopware.store
+
 // Siemens Mobility GmbH
 // Submitted by Oliver Graebner <security@mo-siemens.io>
 mo-siemens.io
@@ -12793,6 +12830,10 @@ stackhero-network.com
 static.land
 dev.static.land
 sites.static.land
+
+// Sony Interactive Entertainment LLC : https://sie.com/
+// Submitted by David Coles <david.coles@sony.com>
+playstation-cloud.com
 
 // SourceLair PC : https://www.sourcelair.com
 // Submitted by Antonis Kalipetis <akalipetis@sourcelair.com>
@@ -13016,8 +13057,15 @@ wedeploy.sh
 remotewd.com
 
 // Wikimedia Labs : https://wikitech.wikimedia.org
-// Submitted by Yuvi Panda <yuvipanda@wikimedia.org>
+// Submitted by Arturo Borrero Gonzalez <aborrero@wikimedia.org>
 wmflabs.org
+toolforge.org
+wmcloud.org
+
+// WISP : https://wisp.gg
+// Submitted by Stepan Fedotov <stepan@wisp.gg>
+panel.gg
+daemon.panel.gg
 
 // WoltLab GmbH : https://www.woltlab.com
 // Submitted by Tim Düsterhus <security@woltlab.cloud>
@@ -13090,5 +13138,9 @@ bss.design
 basicserver.io
 virtualserver.io
 enterprisecloud.nu
+
+// Mintere : https://mintere.com/
+// Submitted by Ben Aubin <security@mintere.com>
+mintere.site
 
 // ===END PRIVATE DOMAINS===
