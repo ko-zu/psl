@@ -1,11 +1,11 @@
 publicsuffixlist
 ===
 
-[Public Suffix List](https://publicsuffix.org/) parser implementation for Python 2.5+/3.x.
+[Public Suffix List](https://publicsuffix.org/) parser implementation for Python 2.7+/3.x.
 
 - Compliant with [TEST DATA](http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1)
 - Support IDN (unicode or punycoded).
-- Support Python2.5+ and Python 3.x
+- Support Python2.7+ and Python 3.x
 - Shipped with built-in PSL and the updater script.
 - Written in Pure Python. No library dependencies.
 
@@ -17,7 +17,7 @@ Install
 ===
 `publicsuffixlist` can be installed via `pip` or `pip3`.
 ```
-$ sudo pip install publicsuffixlist
+sudo pip install publicsuffixlist
 ```
 
 If you are in a bit old distributions (RHEL/CentOS6.x), you may need to update `pip` itself before install.
@@ -60,7 +60,7 @@ with open("latest_psl.dat", "rb") as f:
     psl = PublicSuffixList(f)
 ```
 
-Works with both Python 2.x and 3.x.
+Works with both Python 2.7+ and 3.x.
 ```
 $ python2 setup.py test
 $ python3 setup.py test

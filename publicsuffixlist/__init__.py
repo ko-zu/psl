@@ -69,12 +69,8 @@ class PublicSuffixList(object):
         self.accept_unknown = accept_unknown
 
         if source is None:
-            try:
-                source = open(PSLFILE, "rb")
+            with open(PSLFILE, "rb") as source:
                 self._parse(source, accept_encoded_idn, only_icann=only_icann)
-            finally:
-                if source:
-                    source.close()
         else:
             self._parse(source, accept_encoded_idn, only_icann=only_icann)
 
