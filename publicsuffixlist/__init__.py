@@ -240,7 +240,7 @@ class PublicSuffixList(object):
 
     def is_private(self, domain):
         """ Return True if domain is private suffix or sub-domain. """
-        return self.suffix(domain) is not None
+        return self.privatesuffix(domain) is not None
 
     def is_public(self, domain):
         """ Return True if domain is publix suffix. """
