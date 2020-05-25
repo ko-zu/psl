@@ -19,7 +19,7 @@ class PublicSuffixList(PSL):
     def get_public_suffix(self, domain):
         """ Return shortest private suffix or "". """
 
-        return self.suffix(domain) or ""
+        return self.privatesuffix(domain) or ""
 
 
 class UnsafePublicSuffixList(PSL):
@@ -28,4 +28,4 @@ class UnsafePublicSuffixList(PSL):
     def get_public_suffix(self, domain):
         """ Return shortest private suffix or longest public suffix. """
 
-        return self.suffix(domain) or self.publicsuffix(domain) or ""
+        return self.privatesuffix(domain) or self.publicsuffix(domain) or ""
