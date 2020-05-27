@@ -10,8 +10,17 @@
 import os
 import re
 import unittest
+from unittest.mock import mock_open, patch
 
 from publicsuffixlist import PublicSuffixList, b, encode_idn, u
+
+PUBLIC_SUFFIX_LIST_MOCK = """
+// ===BEGIN ICANN DOMAINS===
+*.kobe.jp
+// ===END ICANN DOMAINS===
+// ===BEGIN PRIVATE DOMAINS===
+// ===END PRIVATE DOMAINS===
+"""
 
 
 class TestPSL(unittest.TestCase):
@@ -181,6 +190,25 @@ class TestPSLSections(unittest.TestCase):
         psl = PublicSuffixList(only_icann=True)
         self.assertEqual(psl.publicsuffix("www.example.com"), 'com')
         self.assertEqual(psl.publicsuffix("example.priv.at"), 'at')
+
+
+class TestRemotePsl(unittest.TestCase):
+    def test_download(self):
+        with patch("urllib.request.urlopen",
+                   mock_open(read_data=PUBLIC_SUFFIX_LIST_MOCK)) as mf:
+            psl = PublicSuffixList(download=True)
+            self.assertEqual(psl.suffix("example.nagoya.jp"), "nagoya.jp")
+            self.assertEqual(psl.suffix("example.kobe.jp"), None)
+            mf.assert_called_with(
+                "https://publicsuffix.org/list/public_suffix_list.dat")
+
+    def test_no_download(self):
+        with patch("urllib.request.urlopen",
+                   mock_open(read_data=PUBLIC_SUFFIX_LIST_MOCK)) as mf:
+            psl = PublicSuffixList()
+            self.assertEqual(psl.suffix("example.nagoya.jp"), None)
+            self.assertEqual(psl.suffix("example.kobe.jp"), None)
+            assert not mf.called
 
 
 if __name__ == "__main__":

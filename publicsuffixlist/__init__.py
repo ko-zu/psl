@@ -38,6 +38,16 @@ else:
     decodablestr = basestring
 
 
+def remote_file():
+    try:
+        # python3.x
+        from urllib.request import urlopen
+    except ImportError:
+        # python 2.x
+        from urllib2 import urlopen
+    return urlopen(PSLURL)
+
+
 def encode_idn(domain):
     return u(domain).encode("idna").decode("ascii")
 
@@ -54,7 +64,7 @@ class PublicSuffixList(object):
     """
 
     def __init__(self, source=None, accept_unknown=True, accept_encoded_idn=True,
-                 only_icann=False):
+                 only_icann=False, download=False):
         """ Parse PSL source file and Return PSL object
 
         source: file (line iterable) object, or flat str to parse. (Default: built-in PSL file)
@@ -70,7 +80,7 @@ class PublicSuffixList(object):
 
         if source is None:
             try:
-                source = open(PSLFILE, "rb")
+                source = remote_file() if download else open(PSLFILE, "rb")
                 self._parse(source, accept_encoded_idn, only_icann=only_icann)
             finally:
                 if source:
