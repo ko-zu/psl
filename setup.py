@@ -7,7 +7,7 @@ from setuptools import setup
 description = codecs.open('README.md', encoding='utf-8').read()
 
 setup(name="publicsuffixlist",
-      version="0.6.15",
+      version="0.7.0",
       packages=["publicsuffixlist"],
       package_data={
           "publicsuffixlist": [
@@ -28,6 +28,7 @@ setup(name="publicsuffixlist",
           "Operating System :: OS Independent",
 
         ],
+      python_requires=">=2.6",
       extras_require={
           "update": ["requests"],
           "readme": ["pandoc"],
