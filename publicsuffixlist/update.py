@@ -6,7 +6,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 #
-
+import calendar
 import os
 import time
 from email.utils import parsedate
@@ -27,7 +27,6 @@ def updatePSL(psl_file=PSLFILE):
     if requests is None:
         raise Exception("Please install python-requests http(s) library. $ sudo pip install requests")
 
-
     r = requests.get(PSLURL)
     if r.status_code != requests.codes.ok or len(r.content) == 0:
         raise Exception("Could not download PSL from " + PSLURL)
@@ -42,7 +41,7 @@ def updatePSL(psl_file=PSLFILE):
 
     os.rename(psl_file + ".swp", psl_file)
     if lastmod:
-        t = time.mktime(parsedate(lastmod))
+        t = calendar.timegm(parsedate(lastmod))
         os.utime(psl_file, (t, t))
 
     print("PSL updated")
