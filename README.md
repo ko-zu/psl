@@ -44,7 +44,7 @@ psl.privatesuffix("com") # None
 # None if no private (non-public) part found
 
 
-psl.publicsuffix("www.example.unknownnewtld") # "unkownnewtld"
+psl.publicsuffix("www.example.unknownnewtld") # "unknownnewtld"
 # new TLDs are valid public suffix by default
 
 psl.publicsuffix(u"www.example.香港")   # u"香港"
@@ -66,14 +66,14 @@ $ python2 setup.py test
 $ python3 setup.py test
 ```
 
-Drop-in compatibility code to replace [publicsuffix](https://pypi.python.org/pypi/publicsuffix/)
+Drop-in compatibility code to replace [publicsuffix](https://pypi.org/project/publicsuffix/)
 ```python
 # from publicsuffix import PublicSuffixList
 from publicsuffixlist.compat import PublicSuffixList
 
 psl = PublicSuffixList()
 psl.suffix("www.example.com")   # return "example.com"
-psl.suffix("com")               # return "" rather than None
+psl.suffix("com")               # return "" (as str, not None)
 ```
 
 Some convenient methods available.
@@ -118,4 +118,4 @@ Source / Link
 ===
 
 - Git repository on GitHub (https://github.com/ko-zu/psl)
-- PyPI (https://pypi.python.org/pypi?name=publicsuffixlist&:action=display)
+- PyPI (https://pypi.org/project/publicsuffixlist/)
