@@ -7,7 +7,7 @@ from setuptools import setup
 description = codecs.open('README.md', encoding='utf-8').read()
 
 setup(name="publicsuffixlist",
-      version="0.7.2",
+      version="0.7.3",
       packages=["publicsuffixlist"],
       package_data={
           "publicsuffixlist": [
