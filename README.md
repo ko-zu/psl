@@ -3,7 +3,7 @@ publicsuffixlist
 
 [Public Suffix List](https://publicsuffix.org/) parser implementation for Python 2.6+/3.x.
 
-- Compliant with [TEST DATA](http://mxr.mozilla.org/mozilla-central/source/netwerk/test/unit/data/test_psl.txt?raw=1)
+- Compliant with [TEST DATA](https://raw.githubusercontent.com/publicsuffix/list/master/tests/test_psl.txt)
 - Support IDN (unicode or punycoded).
 - Support Python2.6+ and Python 3.x
 - Shipped with built-in PSL and the updater script.
