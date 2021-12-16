@@ -174,6 +174,35 @@ invalid
         self.assertEqual(psl.subdomain("aaa.www.example.com", depth=2), "aaa.www.example.com")
         self.assertEqual(psl.subdomain("aaa.www.example.com", depth=3), None)  # no sufficient depth
 
+    def test_longwildcard(self):
+        source = """
+com
+*.compute.example.com
+"""
+        psl = PublicSuffixList(source.splitlines())
+
+        self.assertEqual(psl.publicsuffix("com"), "com")
+        self.assertEqual(psl.privatesuffix("com"), None)
+
+        self.assertEqual(psl.publicsuffix("example.com"), "com")
+        self.assertEqual(psl.privatesuffix("example.com"), "example.com")
+
+        self.assertEqual(psl.publicsuffix("compute.example.com"), "com")
+        self.assertEqual(psl.privatesuffix("compute.example.com"), "example.com")
+
+        self.assertEqual(psl.publicsuffix("region.compute.example.com"), "region.compute.example.com")
+        self.assertEqual(psl.privatesuffix("region.compute.example.com"), None)
+
+        self.assertEqual(psl.publicsuffix("user.region.compute.example.com"), "region.compute.example.com")
+        self.assertEqual(psl.privatesuffix("user.region.compute.example.com"), "user.region.compute.example.com")
+
+        self.assertEqual(psl.publicsuffix("sub.user.region.compute.example.com"), "region.compute.example.com")
+        self.assertEqual(psl.privatesuffix("sub.user.region.compute.example.com"), "user.region.compute.example.com")
+
+        # mismatch in the middle
+        self.assertEqual(psl.publicsuffix("user.region.not-compute.example.com"), "com")
+        self.assertEqual(psl.privatesuffix("user.region.not-compute.example.com"), "example.com")
+
 
 class TestPSLSections(unittest.TestCase):
 
