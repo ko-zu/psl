@@ -242,7 +242,7 @@ class PublicSuffixList(object):
 
     def is_public(self, domain):
         """ Return True if domain is publix suffix. """
-        return self.publicsuffix(domain) == domain
+        return self.publicsuffix(domain) == domain.lower()
 
     def privateparts(self, domain):
         """ Return tuple of labels and the private suffix. """

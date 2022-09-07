@@ -209,6 +209,17 @@ com
         self.assertEqual(psl.publicsuffix("user.region.not-compute.example.com"), "com")
         self.assertEqual(psl.privatesuffix("user.region.not-compute.example.com"), "example.com")
 
+    def test_is_utilities_mixcase(self):
+        psl = self.psl
+        self.assertEqual(psl.is_private("Jp"), False)
+        self.assertEqual(psl.is_private("Co.Jp"), False)
+        self.assertEqual(psl.is_private("Example.Co.Jp"), True)
+        self.assertEqual(psl.is_private("Www.Example.Co.Jp"), True)
+        self.assertEqual(psl.is_public("Jp"), True)
+        self.assertEqual(psl.is_public("Co.Jp"), True)
+        self.assertEqual(psl.is_public("Example.Co.Jp"), False)
+        self.assertEqual(psl.is_public("Www.Example.Co.Jp"), False)
+
 
 class TestPSLSections(unittest.TestCase):
 
