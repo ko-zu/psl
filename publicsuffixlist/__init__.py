@@ -251,6 +251,7 @@ class PublicSuffixList(object):
             return None
         else:
             # I know the domain is valid and ends with private suffix
+            domain = domain.lower()
             pre = domain[0:-(len(s)+1)]
             if pre == "":
                 return (s,)

@@ -163,7 +163,11 @@ invalid
 
     def test_privateparts(self):
         psl = self.psl
-        self.assertEqual(psl.privateparts("aaa.www.example.com"), ("aaa", "www", "example.com"))
+        self.assertEqual(psl.privateparts("Jp"), None)
+        self.assertEqual(psl.privateparts("Co.Jp"), None)
+        self.assertEqual(psl.privateparts("Example.Co.Jp"), ("example.co.jp",))
+        self.assertEqual(psl.privateparts("Www.Example.Co.Jp"), ("www", "example.co.jp"))
+        self.assertEqual(psl.privateparts("Aaa.Www.Example.Co.Jp"), ("aaa", "www", "example.co.jp"))
 
     def test_noprivateparts(self):
         psl = self.psl
@@ -175,10 +179,14 @@ invalid
 
     def test_subdomain(self):
         psl = self.psl
-        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=0), "example.com")
-        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=1), "www.example.com")
-        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=2), "aaa.www.example.com")
-        self.assertEqual(psl.subdomain("aaa.www.example.com", depth=3), None)  # no sufficient depth
+        self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=0), "example.co.jp")
+        self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=1), "www.example.co.jp")
+        self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=2), "aaa.www.example.co.jp")
+        self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=3), None)  # no sufficient depth
+
+        # not private suffix
+        self.assertEqual(psl.subdomain("Com", depth=0), None)
+        self.assertEqual(psl.subdomain("Com", depth=1), None)
 
     def test_longwildcard(self):
         source = """
