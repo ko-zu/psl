@@ -134,7 +134,8 @@ class PublicSuffixList(object):
         if not isinstance(domain, basestr):
             raise TypeError()
 
-        labels = domain.lower().rsplit(".", self._maxlabel + 2)
+        domain = domain.lower()
+        labels = domain.rsplit(".", self._maxlabel + 2)
         ll = len(labels)
 
         if "\0" in domain or "" in labels:
@@ -193,7 +194,8 @@ class PublicSuffixList(object):
         if not isinstance(domain, basestr):
             raise TypeError()
 
-        labels = domain.lower().rsplit(".", self._maxlabel + 2)
+        domain = domain.lower()
+        labels = domain.rsplit(".", self._maxlabel + 2)
         ll = len(labels)
 
         if "\0" in domain or "" in labels:
@@ -203,7 +205,7 @@ class PublicSuffixList(object):
         # shortcut for tld
         if ll == 1:
             if accept_unknown:
-                return domain
+                return labels[0]
             else:
                 return None
 

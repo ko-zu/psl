@@ -28,7 +28,13 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.publicsuffix(u("www.example.co.jp")).__class__, u("co.jp").__class__)
 
     def test_uppercase(self):
+        self.assertEqual(self.psl.suffix("Jp"), None)
+        self.assertEqual(self.psl.suffix("cO.Jp"), None)
+        self.assertEqual(self.psl.suffix("eXaMpLe.cO.Jp"), "example.co.jp")
         self.assertEqual(self.psl.suffix("wWw.eXaMpLe.cO.Jp"), "example.co.jp")
+        self.assertEqual(self.psl.publicsuffix("Jp"), "jp")
+        self.assertEqual(self.psl.publicsuffix("cO.Jp"), "co.jp")
+        self.assertEqual(self.psl.publicsuffix("eXaMpLe.cO.Jp"), "co.jp")
         self.assertEqual(self.psl.publicsuffix("wWw.eXaMpLe.cO.Jp"), "co.jp")
 
     def test_invaliddomain(self):
