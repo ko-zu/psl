@@ -173,7 +173,7 @@ class PublicSuffixList(object):
 
         else:
             # no match found
-            if self.accept_unknown and ll >= 2:
+            if accept_unknown and ll >= 2:
                 return ".".join(labels[-2:])
             else:
                 return None
