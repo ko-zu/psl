@@ -67,8 +67,18 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.suffix("www.example.unknowntld"), "example.unknowntld")
         self.assertEqual(self.psl.suffix("unknowntld"), None)
 
+        self.assertEqual(self.psl.suffix("www.example.unknowntld", accept_unknown=True), "example.unknowntld")
+        self.assertEqual(self.psl.suffix("unknowntld", accept_unknown=True), None)
+        self.assertEqual(self.psl.suffix("www.example.unknowntld", accept_unknown=False), None)
+        self.assertEqual(self.psl.suffix("unknowntld", accept_unknown=False), None)
+
         self.assertEqual(self.psl.publicsuffix("www.example.unknowntld"), "unknowntld")
         self.assertEqual(self.psl.publicsuffix("unknowntld"), "unknowntld")
+
+        self.assertEqual(self.psl.publicsuffix("www.example.unknowntld", accept_unknown=True), "unknowntld")
+        self.assertEqual(self.psl.publicsuffix("unknowntld", accept_unknown=True), "unknowntld")
+        self.assertEqual(self.psl.publicsuffix("www.example.unknowntld", accept_unknown=False), None)
+        self.assertEqual(self.psl.publicsuffix("unknowntld", accept_unknown=False), None)
 
     def test_deny_unknown(self):
         source = """
