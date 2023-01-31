@@ -38,7 +38,12 @@ def updatePSL(psl_file=PSLFILE):
     with open(psl_file + ".swp", "rb") as f:
         psl = PublicSuffixList(f)
 
-    os.rename(psl_file + ".swp", psl_file)
+    try:
+        os.replace(psl_file + ".swp", psl_file)
+    except AttributeError:
+        # will not work on python2 on Win.
+        os.rename(psl_file + ".swp", psl_file)
+
     if lastmod:
         t = calendar.timegm(parsedate(lastmod))
         os.utime(psl_file, (t, t))
