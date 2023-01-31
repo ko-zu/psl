@@ -24,6 +24,9 @@ def updatePSL(psl_file=PSLFILE):
 
     :param psl_file: path for the file to store the list. Default: PSLFILE
     """
+    print("This is a script to download the latest PSL file.")
+    print("Do not run this repeatedly more than once per day.")
+
     if requests is None:
         raise Exception("Please install python-requests http(s) library. $ sudo pip install requests")
 
