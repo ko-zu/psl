@@ -1,0 +1,34 @@
+name: "Update PSL"
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create PR for PSL Update
+        id: psl_update_pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          echo "Start."
+          # Configure git and Push updates
+          git config --global user.email github-actions@github.com
+          git config --global user.name github-actions
+          git config pull.rebase false
+          branch=psl-update-$GITHUB_RUN_ID
+          git checkout -b $branch
+          message='Automated PSL update'
+          # Add / update and commit
+          curl https://raw.githubusercontent.com/publicsuffix/list/master/public_suffix_list.dat > publicsuffixlist/public_suffix_list.dat
+          git add publicsuffixlist/public_suffix_list.dat
+          git commit -m 'Automated PSL update' || export NO_UPDATES=true
+          # Push
+          if [ "$NO_UPDATES" != "true" ] ; then
+              git push origin "$branch"
+              gh pr create --title "$message" --body "$message"
+          fi
