@@ -1,6 +1,8 @@
 name: "Update PSL"
 on:
   workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * 1'
 
 jobs:
   deploy:
@@ -29,6 +31,11 @@ jobs:
           git commit -m 'Automated PSL update' || export NO_UPDATES=true
           # Push
           if [ "$NO_UPDATES" != "true" ] ; then
+              VERSION=$(grep -E '^\s+version=' setup.py | sed -E 's/\s+version="(.*?)",/\1/')
+              NEXTVERSION=$(echo ${VERSION} | awk -F. -v OFS=. '{$NF += 1 ; print}')
+              sed -i "s/version=\"$VERSION\"/version=\"$NEXTVERSION\"/" setup.py
+              git add setup.py
+              git commit -m "Bump version from automated PSL update"
               git push origin "$branch"
               gh pr create --title "$message" --body "$message"
           fi
