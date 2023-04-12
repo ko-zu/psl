@@ -114,6 +114,13 @@ License
 - PSL testcase dataset is public domain (CC0).
 
 
+Development / Packaging
+===
+This module and its packaging workflow are maintained in the author's repository located at https://github.com/ko-zu/psl.
+A new package, which includes the latest PSL file, is automatically generated and uploaded to PyPI.
+The last part of the version number represents the release date, for instance, `0.10.1.20230331`.
+
+
 Source / Link
 ===
 

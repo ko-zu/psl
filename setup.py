@@ -4,10 +4,17 @@
 import codecs
 from setuptools import setup
 
+### version placeholder for release automation
+
+__version__ = "0.9.4"
+
+### Change the minor version before git push to the master branch.
+
+
 description = codecs.open('README.md', encoding='utf-8').read()
 
 setup(name="publicsuffixlist",
-      version="0.9.3",
+      version=__version__,
       packages=["publicsuffixlist"],
       package_data={
           "publicsuffixlist": [

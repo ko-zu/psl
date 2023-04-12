@@ -1,0 +1,160 @@
+name: publish package
+
+on:
+  push:
+    branches:
+    - master
+  schedule:
+    - cron: "12 3 * * *"
+
+env:
+  BASEBRANCH: master
+  WORKBRANCH: autorelease
+  USERNAME: ko-zu (github-actions)
+  USEREMAIL: causeless@gmail.com
+
+concurrency: publish-package-with-updated-psl
+
+jobs:
+  verify-and-publish-main-branch:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ env.BASEBRANCH }}
+
+    - name: Set git config
+      run: |
+        git config user.name "$USERNAME"
+        git config user.email "$USEREMAIL"
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+        cache: "pip"
+        cache-dependency-path: "requirements-dev.txt"
+    
+    - name: Verify the psl
+      run: |
+        pip install --progress-bar off -r requirements-dev.txt 
+        pip install .
+        python -m publicsuffixlist.update
+
+        if ! git diff --exit-code publicsuffixlist/public_suffix_list.dat ; then
+          # PSL not updated
+          echo "PSL file is not up to date. Abort."
+          exit 1
+        fi
+
+        if ! python -m publicsuffixlist.test ; then
+          echo "Test failed. Abort."
+          exit 1
+        fi
+     
+    - name: Tag and release new version
+      run: |
+        BASEVERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)"$/\1/p' setup.py)
+        [[ -z "$BASEVERSION" ]] && exit 1
+        echo "BASEVERSION=${BASEVERSION}" >> $GITHUB_ENV
+        TAG=v${BASEVERSION}
+        
+        git fetch origin $BASEBRANCH
+        git tag ${TAG} origin/$BASEBRANCH
+        git push origin ${TAG}
+        
+        # Create refreshed workbranch.
+        git checkout origin/$BASEBRANCH -b $WORKBRANCH
+
+        VERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)"$/\1/p' setup.py)
+        NEWDATE=$(date -u "+%Y%m%d")
+        NEWVERSION=${VERSION}.${NEWDATE}
+        NEWTAG=v${NEWVERSION}-gha
+        
+        sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' setup.py
+        
+        pip install .
+        python setup.py sdist --formats=gztar
+        python setup.py bdist_wheel --universal
+        
+        if ! python -m publicsuffixlist.test ; then
+          echo "Test failed. Abort."
+          exit 1
+        fi
+
+        git add setup.py publicsuffixlist/public_suffix_list.dat
+        git commit -m "Automated release: ${NEWTAG}"
+        git push -f origin $WORKBRANCH
+        git tag ${NEWTAG}
+        git push origin ${NEWTAG}
+
+    - name: Publish package to TestPyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/
+
+
+  scheduled-autorelease:
+    if: ${{ github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ env.WORKBRANCH }}
+
+    - name: Set git config
+      run: |
+        git config user.name "$USERNAME"
+        git config user.email "$USEREMAIL"
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+        cache: "pip"
+        cache-dependency-path: "requirements-dev.txt"
+    
+    - name: Update automation branch
+      id: gennewversion
+      run: |
+        pip install --progress-bar off -r requirements-dev.txt 
+        pip install .
+        python -m publicsuffixlist.update
+
+        if git diff --exit-code publicsuffixlist/public_suffix_list.dat ; then
+          echo "No change in the PSL file. Skipping."
+          echo "release=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+
+        VERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)\.[0-9]+"$/\1/p' setup.py)
+        NEWDATE=$(date -u "+%Y%m%d")
+        NEWVERSION=${VERSION}.${NEWDATE}
+        NEWTAG=v${NEWVERSION}-gha
+        
+        sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' setup.py
+        
+        pip install .
+        python setup.py sdist --formats=gztar
+        python setup.py bdist_wheel --universal
+        
+        if ! python -m publicsuffixlist.test ; then
+          echo "Test failed. Abort."
+          exit 1
+        fi
+
+        git add setup.py publicsuffixlist/public_suffix_list.dat
+        git commit -m "Automated release: ${NEWTAG}"
+        git push -f origin $WORKBRANCH
+        git tag ${NEWTAG}
+        git push origin ${NEWTAG}
+        
+        echo "release=true" >> $GITHUB_OUTPUT
+
+
+    - name: Publish package to TestPyPI
+      if: ${{ steps.gennewversion.outputs.release == 'true' }}
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/
