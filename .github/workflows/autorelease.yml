@@ -88,11 +88,10 @@ jobs:
         git tag ${NEWTAG}
         git push origin ${NEWTAG}
 
-    - name: Publish package to TestPyPI
+    - name: Publish package to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository_url: https://test.pypi.org/legacy/
+        password: ${{ secrets.PYPI_API_TOKEN }}
 
 
   scheduled-autorelease:
@@ -152,9 +151,8 @@ jobs:
         echo "release=true" >> $GITHUB_OUTPUT
 
 
-    - name: Publish package to TestPyPI
+    - name: Publish package to PyPI
       if: ${{ steps.gennewversion.outputs.release == 'true' }}
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        repository_url: https://test.pypi.org/legacy/
+        password: ${{ secrets.PYPI_API_TOKEN }}
