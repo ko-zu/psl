@@ -6,7 +6,7 @@ from setuptools import setup
 
 ### version placeholder for release automation
 
-__version__ = "0.10.0.20240420"
+__version__ = "0.10.0.20240502"
 
 ### Change the minor version before git push to the master branch.
 
