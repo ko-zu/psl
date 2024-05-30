@@ -37,16 +37,22 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.publicsuffix("eXaMpLe.cO.Jp"), "co.jp")
         self.assertEqual(self.psl.publicsuffix("wWw.eXaMpLe.cO.Jp"), "co.jp")
 
-    def test_invaliddomain(self):
-        self.assertEqual(self.psl.suffix("www..invalid"), None)
-        self.assertEqual(self.psl.suffix(".example.com"), None)
-        self.assertEqual(self.psl.suffix("example.com."), None)
-        self.assertEqual(self.psl.suffix(""), None)
+    def test_notpermitted_domain(self):
+        # From the PSL definition, empty labels are not permitted.
+        # From the test_data.txt, leading dot is not permitted.
+        # However, it seems most implementations ignore trailing dot.
 
-        self.assertEqual(self.psl.publicsuffix("www..invalid"), None)
+        self.assertEqual(self.psl.suffix(".example.com"), None)
         self.assertEqual(self.psl.publicsuffix(".example.com"), None)
-        self.assertEqual(self.psl.publicsuffix("example.com."), None)
+
+        self.assertEqual(self.psl.suffix("www..invalid"), None)
+        self.assertEqual(self.psl.suffix(""), None)
+        self.assertEqual(self.psl.publicsuffix("www..invalid"), None)
         self.assertEqual(self.psl.publicsuffix(""), None)
+
+    def test_ignored_trailing_dot(self):
+        self.assertEqual(self.psl.suffix("example.com."), "example.com")
+        self.assertEqual(self.psl.publicsuffix("example.com."), "com")
 
     def test_idn(self):
         tld = u("香港")
