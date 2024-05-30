@@ -54,6 +54,32 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.suffix("example.com."), "example.com")
         self.assertEqual(self.psl.publicsuffix("example.com."), "com")
 
+    def test_wiki_example(self):
+        # from PSL Wiki
+        # https://github.com/publicsuffix/list/wiki/Format/ffd14e41e850c69222eecf0aab4248619b53905a
+        source = """
+com
+*.foo.com
+*.jp
+*.hokkaido.jp
+*.tokyo.jp
+!pref.hokkaido.jp
+!metro.tokyo.jp
+"""
+        psl = PublicSuffixList(source.splitlines())
+
+        self.assertEqual(psl.is_private("foo.com"), True)
+        self.assertEqual(psl.is_private("bar.foo.com"), False)
+        self.assertEqual(psl.is_private("example.bar.foo.com"), True)
+        self.assertEqual(psl.is_private("foo.bar.jp"), True)
+        self.assertEqual(psl.is_private("bar.jp"), False)
+        self.assertEqual(psl.is_private("foo.bar.hokkaido.jp"), True)
+        self.assertEqual(psl.is_private("bar.hokkaido.jp"), False)
+        self.assertEqual(psl.is_private("foo.bar.tokyo.jp"), True)
+        self.assertEqual(psl.is_private("bar.tokyo.jp"), False)
+        self.assertEqual(psl.is_private("pref.hokkaido.jp"), True)
+        self.assertEqual(psl.is_private("metro.tokyo.jp"), True)
+
     def test_idn(self):
         tld = u("香港")
         self.assertEqual(self.psl.suffix(u("www.example.") + tld), u("example.") + tld)
