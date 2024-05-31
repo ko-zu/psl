@@ -54,6 +54,16 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.publicsuffix("eXaMpLe.cO.Jp"), "co.jp")
         self.assertEqual(self.psl.publicsuffix("wWw.eXaMpLe.cO.Jp"), "co.jp")
 
+    def test_keepcase(self):
+        self.assertEqual(self.psl.suffix("Jp", keep_case=True), None)
+        self.assertEqual(self.psl.suffix("cO.Jp", keep_case=True), None)
+        self.assertEqual(self.psl.suffix("eXaMpLe.cO.Jp", keep_case=True), "eXaMpLe.cO.Jp")
+        self.assertEqual(self.psl.suffix("wWw.eXaMpLe.cO.Jp", keep_case=True), "eXaMpLe.cO.Jp")
+        self.assertEqual(self.psl.publicsuffix("Jp", keep_case=True), "Jp")
+        self.assertEqual(self.psl.publicsuffix("cO.Jp", keep_case=True), "cO.Jp")
+        self.assertEqual(self.psl.publicsuffix("eXaMpLe.cO.Jp", keep_case=True), "cO.Jp")
+        self.assertEqual(self.psl.publicsuffix("wWw.eXaMpLe.cO.Jp", keep_case=True), "cO.Jp")
+
     def test_notpermitted_domain(self):
         # From the PSL definition, empty labels are not permitted.
         # From the test_psl.txt, leading dot is not permitted.
@@ -236,6 +246,12 @@ invalid
         privres = tuple(b"example.com".split(b"."))
         self.assertEqual(psl.privatesuffix(data), privres)
 
+    def test_bytestuple_keepcase(self):
+        psl = self.psl
+        data = tuple(b"TesT.WwW.ExamplE.CoM".split(b"."))
+        privres = tuple(b"ExamplE.CoM".split(b"."))
+        self.assertEqual(psl.privatesuffix(data, keep_case=True), privres)
+
     def test_compatclass(self):
 
         from publicsuffixlist.compat import PublicSuffixList
@@ -276,6 +292,11 @@ invalid
         self.assertEqual(psl.privateparts("Www.Example.Co.Jp"), ("www", "example.co.jp"))
         self.assertEqual(psl.privateparts("Aaa.Www.Example.Co.Jp"), ("aaa", "www", "example.co.jp"))
 
+    def test_privateparts_keepcase(self):
+        psl = self.psl
+        self.assertEqual(psl.privateparts("Aaa.Www.Example.Co.Jp", keep_case=True),
+                                   ("Aaa", "Www", "Example.Co.Jp"))
+
     def test_noprivateparts(self):
         psl = self.psl
         self.assertEqual(psl.privateparts("com"), None)  # no private part
@@ -294,6 +315,14 @@ invalid
         # not private suffix
         self.assertEqual(psl.subdomain("Com", depth=0), None)
         self.assertEqual(psl.subdomain("Com", depth=1), None)
+
+    def test_subdomain_keep_case(self):
+        psl = self.psl
+        self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=1, keep_case=True),
+                                           "Www.Example.Co.Jp")
+        self.assertEqual(psl.subdomain(bytestuple(b"Aaa.Www.Example.Co.Jp"), depth=1, keep_case=True),
+                                           bytestuple(b"Www.Example.Co.Jp"))
+
 
     def test_longwildcard(self):
         source = """

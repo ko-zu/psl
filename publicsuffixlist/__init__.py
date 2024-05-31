@@ -114,29 +114,38 @@ class PublicSuffixList(object):
         self._publicsuffix = frozenset(publicsuffix)
         self._maxlabel = maxlabel
 
-    def _joinlabels(self, domain, labels, start, end=None):
+    def _joinlabels(self, domain, labels, start, *, keep_case=False):
         if isinstance(domain, basestr):
-            return ".".join(labels[start:end])
+            if keep_case:
+                return ".".join(domain.split(".")[start:])
+            else:
+                return ".".join(labels[start:])
+
         else:
-            return tuple(x.lower() for x in domain[start:end])
+            if keep_case:
+                return domain[start:]
+            else:
+                return tuple(x.lower() for x in domain[start:])
+
 
     def _preparedomain(self, domain):
+
         if isinstance(domain, basestr):
             # From PSL definition,
             # Empty labels are not permitted, meaning that leading and trailing
             # dots are ignored.
             if domain.endswith("."):
-                labels = domain[:-1].lower().split(".")
-            else:
-                labels = domain.lower().split(".")
+                domain = domain[:-1]
+            labels = domain.lower().split(".")
             if "" in labels:
                 # not a valid domain
                 return None, None
+
         elif isinstance(domain, (tuple, list)):
             # expect as iter of bytes
             # result as tuple of bytes
-            domain = tuple(x.lower() for x in domain)
-            labels = tuple(str(x, errors='surrogateescape')
+            domain = tuple(x for x in domain)
+            labels = tuple(str(x, errors='surrogateescape').lower()
                             for x in domain)
             if "" in labels:
                 return None, None
@@ -222,15 +231,16 @@ class PublicSuffixList(object):
 
 
 
-    def suffix(self, domain, accept_unknown=None):
+    def suffix(self, domain, accept_unknown=None, *, keep_case=False):
         """ Alias for privatesuffix """
-        return self.privatesuffix(domain, accept_unknown)
+        return self.privatesuffix(domain, accept_unknown=accept_unknown, keep_case=keep_case)
 
-    def privatesuffix(self, domain, accept_unknown=None):
+    def privatesuffix(self, domain, accept_unknown=None, *, keep_case=False):
         """ Return shortest suffix assigned for an individual.
 
         domain: str or unicode to parse. (Required)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
+        keep_case: bool, when False, returns the domain in lowercase. (Default: False)
 
         Return None if domain has invalid format.
         Return None if domain has no private part.
@@ -243,13 +253,14 @@ class PublicSuffixList(object):
         if not publen or len(labels) < publen + 1:
             return None
 
-        return self._joinlabels(domain, labels, -(publen + 1))
+        return self._joinlabels(domain, labels, -(publen + 1), keep_case=keep_case)
 
-    def publicsuffix(self, domain, accept_unknown=None):
+    def publicsuffix(self, domain, accept_unknown=None, *, keep_case=False):
         """ Return longest publically shared suffix.
 
         domain: str or unicode to parse. (Required)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
+        keep_case: bool, when False, returns the domain in lowercase. (Default: False)
 
         Return None if domain has invalid format.
         Return None if domain is not listed in PSL and accept_unknown is False.
@@ -262,7 +273,7 @@ class PublicSuffixList(object):
         if not publen or len(labels) < publen:
             return None
 
-        return self._joinlabels(domain, labels, -publen)
+        return self._joinlabels(domain, labels, -publen, keep_case=keep_case)
 
     def is_private(self, domain):
         """ Return True if domain is private suffix or sub-domain. """
@@ -276,20 +287,31 @@ class PublicSuffixList(object):
         publen = self._countpublic(labels)
         return bool(publen and publen == len(labels))
 
-    def privateparts(self, domain):
+    def privateparts(self, domain, *, keep_case=False):
         """ Return tuple of subdomain labels and the private suffix. """
         domain, labels = self._preparedomain(domain)
         publen = self._countpublic(labels)
         if not publen or len(labels) < publen + 1:
             return None
 
-        priv = self._joinlabels(domain, labels, -(publen+1))
-        return tuple(labels[:-(publen+1)]) + (priv,)
+        priv = self._joinlabels(domain, labels, -(publen+1), keep_case=keep_case)
+        if isinstance(domain, basestr):
+            if keep_case:
+                return tuple(domain.split(".")[:-(publen+1)]) + (priv,)
+            else:
+                return tuple(labels[:-(publen+1)]) + (priv,)
+        else:
+            if keep_case:
+                return tuple(domain[:-(publen+1)]) + (priv,)
+            else:
+                return tuple(x.lower() for x in domain[:-(publen+1)]) + (priv,)
 
-    def subdomain(self, domain, depth):
+    def subdomain(self, domain, depth, *, keep_case=False):
         """ Return so-called subdomain of specified depth in the private suffix. """
-        p = self.privateparts(domain)
-        if p is None or depth > len(p) - 1:
+        domain, labels = self._preparedomain(domain)
+        publen = self._countpublic(labels)
+        if len(labels) < publen + 1 + depth:
             return None
         else:
-            return ".".join(p[-(depth+1):])
+            return self._joinlabels(domain, labels, -(publen + 1 + depth), keep_case=keep_case)
+
