@@ -114,6 +114,114 @@ class PublicSuffixList(object):
         self._publicsuffix = frozenset(publicsuffix)
         self._maxlabel = maxlabel
 
+    def _joinlabels(self, domain, labels, start, end=None):
+        if isinstance(domain, basestr):
+            return ".".join(labels[start:end])
+        else:
+            return tuple(x.lower() for x in domain[start:end])
+
+    def _preparedomain(self, domain):
+        if isinstance(domain, basestr):
+            # From PSL definition,
+            # Empty labels are not permitted, meaning that leading and trailing
+            # dots are ignored.
+            if domain.endswith("."):
+                labels = domain[:-1].lower().split(".")
+            else:
+                labels = domain.lower().split(".")
+            if "" in labels:
+                # not a valid domain
+                return None, None
+        elif isinstance(domain, (tuple, list)):
+            # expect as iter of bytes
+            # result as tuple of bytes
+            domain = tuple(x.lower() for x in domain)
+            labels = tuple(str(x, errors='surrogateescape')
+                            for x in domain)
+            if "" in labels:
+                return None, None
+        else:
+            raise TypeError("Only str, tuple<bytes>, list<bytes> are supported.")
+
+        return domain, labels
+
+    def _countpublic(self, labels, accept_unknown=None):
+
+        if accept_unknown is None:
+            accept_unknown = self.accept_unknown
+
+        if not labels:
+            return 0
+
+        ll = len(labels)
+
+        # shortcut for tld
+        if ll == 1 and accept_unknown:
+            return 1
+
+        # There is the PSL algorithm definition,
+        # https://github.com/publicsuffix/list/wiki/Format
+        #
+        # A domain is said to match a rule if and only if all of the following
+        # conditions are met:
+        # 1. When the domain and rule are split into corresponding labels, that
+        # the domain contains as many or more labels than the rule.
+        # 2. Beginning with the right-most labels of both the domain and the
+        # rule, and continuing for all labels in the rule, one finds that for
+        # every pair, either they are identical, or that the label from the
+        # rule is "*".
+        #
+        # Bacause of rule 1, `foo.com` does not match `*.foo.com`.
+        #
+        # However, there is some confusion in rule evaluation.
+        # test_psl.txt states that city.kobe.jp -> city.kobe.jp
+        # so kobe.jp is public, although kobe.jp is not listed.  That means
+        # test_psl.txt assumes !city.example.com or *.example.com implicitly
+        # declares example.com as also public.
+        #
+        # This module dropped support for the conflicting test case.
+
+        # We start from longest to shortcircuit
+        startfrom = max(0, ll - (self._maxlabel + 1))
+
+        excluded = True
+        for i in range(startfrom, ll):
+            depth = ll - i
+            s = ".".join(labels[-depth:])
+
+            # the check order must be wild > exact > exception
+            # this is required to backtrack subdomain wildcard
+
+            # wildcard match
+            if ("*." + s) in self._publicsuffix:
+                # if we have subdomain, that must be checked against exception
+                # rule.
+                if i > startfrom and not excluded:
+                    return depth + 1
+
+                # If this is entire match, it is not public from the PSL example.
+                # ignore it.
+
+            # exact match
+            if s in self._publicsuffix:
+                return depth
+
+
+            # exception rule
+            if ("!" + s) in self._publicsuffix:
+                # exception rule has wildcard sibiling.
+                # Although the test case assumes it has implicit public domain on the root,
+                # in the PSL definition, the next is not always public.
+                excluded = True
+            else:
+                excluded = False
+
+        if accept_unknown:
+            return 1
+        return 0
+
+
+
     def suffix(self, domain, accept_unknown=None):
         """ Alias for privatesuffix """
         return self.privatesuffix(domain, accept_unknown)
@@ -126,57 +234,16 @@ class PublicSuffixList(object):
 
         Return None if domain has invalid format.
         Return None if domain has no private part.
+        Return in tuple of bytes if domain is tuple (or list) of bytes.
         """
 
-        if accept_unknown is None:
-            accept_unknown = self.accept_unknown
+        domain, labels = self._preparedomain(domain)
+        publen = self._countpublic(labels, accept_unknown)
 
-        if not isinstance(domain, basestr):
-            raise TypeError()
-
-        domain = domain.lower()
-        labels = domain.rsplit(".", self._maxlabel + 2)
-        ll = len(labels)
-
-        if "\0" in domain or "" in labels:
-            # not a valid domain
+        if not publen or len(labels) < publen + 1:
             return None
 
-        if ll <= 1:
-            # is TLD
-            return None
-
-        # skip labels longer than rules
-        for i in range(max(0, ll - self._maxlabel), ll):
-            s = ".".join(labels[i:])
-
-            if i > 0 and ("!*." + s) in self._publicsuffix:
-                return ".".join(labels[i-1:])
-
-            if ("!" + s) in self._publicsuffix:
-                # exact private match
-                return s
-
-            if i > 0 and ("*." + s) in self._publicsuffix:
-                if i <= 1:
-                    # domain is publicsuffix
-                    return None
-                else:
-                    return ".".join(labels[i-2:])
-
-            if s in self._publicsuffix:
-                if i > 0:
-                    return ".".join(labels[i-1:])
-                else:
-                    # domain is publicsuffix
-                    return None
-
-        else:
-            # no match found
-            if accept_unknown and ll >= 2:
-                return ".".join(labels[-2:])
-            else:
-                return None
+        return self._joinlabels(domain, labels, -(publen + 1))
 
     def publicsuffix(self, domain, accept_unknown=None):
         """ Return longest publically shared suffix.
@@ -186,77 +253,38 @@ class PublicSuffixList(object):
 
         Return None if domain has invalid format.
         Return None if domain is not listed in PSL and accept_unknown is False.
+        Return in tuple of bytes if domain is tuple (or list) of bytes.
         """
 
-        if accept_unknown is None:
-            accept_unknown = self.accept_unknown
+        domain, labels = self._preparedomain(domain)
+        publen = self._countpublic(labels, accept_unknown)
 
-        if not isinstance(domain, basestr):
-            raise TypeError()
-
-        domain = domain.lower()
-        labels = domain.rsplit(".", self._maxlabel + 2)
-        ll = len(labels)
-
-        if "\0" in domain or "" in labels:
-            # not a valid domain
+        if not publen or len(labels) < publen:
             return None
 
-        # shortcut for tld
-        if ll == 1:
-            if accept_unknown:
-                return labels[0]
-            else:
-                return None
-
-        # skip labels longer than rules
-        for i in range(max(0, ll - self._maxlabel), ll):
-            s = ".".join(labels[i:])
-
-            if i > 0 and ("!*." + s) in self._publicsuffix:
-                return s
-
-            if ("!" + s) in self._publicsuffix:
-                # exact exclude
-                if i + 1 < ll:
-                    return ".".join(labels[i+1:])
-                else:
-                    return None
-
-            if i > 0 and ("*." + s) in self._publicsuffix:
-                return ".".join(labels[i-1:])
-
-            if s in self._publicsuffix:
-                return s
-
-        else:
-            # no match found
-            if accept_unknown:
-                return labels[-1]
-            else:
-                return None
+        return self._joinlabels(domain, labels, -publen)
 
     def is_private(self, domain):
         """ Return True if domain is private suffix or sub-domain. """
-        return self.privatesuffix(domain) is not None
+        domain, labels = self._preparedomain(domain)
+        publen = self._countpublic(labels)
+        return bool(publen and publen < len(labels))
 
     def is_public(self, domain):
         """ Return True if domain is publix suffix. """
-        return self.publicsuffix(domain) == domain.lower()
+        domain, labels = self._preparedomain(domain)
+        publen = self._countpublic(labels)
+        return bool(publen and publen == len(labels))
 
     def privateparts(self, domain):
-        """ Return tuple of labels and the private suffix. """
-        s = self.privatesuffix(domain)
-        if s is None:
+        """ Return tuple of subdomain labels and the private suffix. """
+        domain, labels = self._preparedomain(domain)
+        publen = self._countpublic(labels)
+        if not publen or len(labels) < publen + 1:
             return None
-        else:
-            # I know the domain is valid and ends with private suffix
-            domain = domain.lower()
-            pre = domain[0:-(len(s)+1)]
-            if pre == "":
-                return (s,)
-            else:
-                return tuple(pre.split(".") + [s])
+
+        priv = self._joinlabels(domain, labels, -(publen+1))
+        return tuple(labels[:-(publen+1)]) + (priv,)
 
     def subdomain(self, domain, depth):
         """ Return so-called subdomain of specified depth in the private suffix. """

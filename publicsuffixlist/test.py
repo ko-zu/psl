@@ -13,6 +13,9 @@ import unittest
 
 from publicsuffixlist import PublicSuffixList, b, encode_idn, u
 
+def bytestuple(x):
+    return tuple(bytes(x).split(b'.'))
+
 
 class TestPSL(unittest.TestCase):
 
@@ -27,6 +30,20 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.publicsuffix("www.example.co.jp").__class__, "co.jp".__class__)
         self.assertEqual(self.psl.publicsuffix(u("www.example.co.jp")).__class__, u("co.jp").__class__)
 
+    def test_typesafe_bytestuple(self):
+        self.assertEqual(
+                self.psl.privatesuffix((b"www",b"example",b"co",b"jp")).__class__,
+                (b"example", b"co", b"jp").__class__)
+        self.assertEqual(
+                self.psl.publicsuffix((b"www",b"example",b"co",b"jp")).__class__,
+                (b"co", b"jp").__class__)
+        self.assertEqual(
+                self.psl.privatesuffix((b"www",b"example",b"co",b"jp"))[-1].__class__,
+                (b"example", b"co", b"jp")[-1].__class__)
+        self.assertEqual(
+                self.psl.publicsuffix((b"www",b"example",b"co",b"jp"))[-1].__class__,
+                (b"co", b"jp")[-1].__class__)
+
     def test_uppercase(self):
         self.assertEqual(self.psl.suffix("Jp"), None)
         self.assertEqual(self.psl.suffix("cO.Jp"), None)
@@ -39,7 +56,7 @@ class TestPSL(unittest.TestCase):
 
     def test_notpermitted_domain(self):
         # From the PSL definition, empty labels are not permitted.
-        # From the test_data.txt, leading dot is not permitted.
+        # From the test_psl.txt, leading dot is not permitted.
         # However, it seems most implementations ignore trailing dot.
 
         self.assertEqual(self.psl.suffix(".example.com"), None)
@@ -57,6 +74,7 @@ class TestPSL(unittest.TestCase):
     def test_wiki_example(self):
         # from PSL Wiki
         # https://github.com/publicsuffix/list/wiki/Format/ffd14e41e850c69222eecf0aab4248619b53905a
+        # https://github.com/publicsuffix/list/issues/1890
         source = """
 com
 *.foo.com
@@ -170,6 +188,53 @@ invalid
         if b("") != "":
             # python3
             self.assertRaises(TypeError, lambda: self.psl.suffix(b("www.example.com")))
+
+    def test_bytestuple(self):
+        psl = self.psl
+        data = (b"www", b"example", b"com")
+        pubres  = (b"com",)
+        privres = (b"example", b"com")
+        self.assertEqual(psl.publicsuffix(data), pubres)
+        self.assertEqual(psl.privatesuffix(data), privres)
+
+    def test_bytestuple_empty(self):
+        psl = self.psl
+        self.assertEqual(psl.publicsuffix(()), None)
+        self.assertEqual(psl.privatesuffix(()), None)
+
+    def test_bytestuple_noneresult(self):
+        psl = self.psl
+        data = (b"com",)
+        pubres  = (b"com",)
+        privres = None
+
+        self.assertEqual(psl.publicsuffix(data), pubres)
+        self.assertEqual(psl.privatesuffix(data), privres)
+
+    def test_wrongtuple_resulttype(self):
+        psl = self.psl
+        data = tuple("www.example.com".split("."))
+        self.assertRaises(TypeError, lambda: psl.suffix(data))
+
+    def test_byteslist_resulttype(self):
+        psl = self.psl
+        data = bytestuple(b"www.example.com")
+        privres = bytestuple(b"example.com")
+
+        data_list = list(data)
+        self.assertEqual(psl.privatesuffix(data_list), privres)
+
+    def test_bytesgen_unsupported(self):
+        psl = self.psl
+        data = bytestuple(b"www.example.com")
+        data_gen = (x for x in data)
+        self.assertRaises(TypeError, lambda: psl.suffix(data_gen))
+
+    def test_bytestuple_lowercase(self):
+        psl = self.psl
+        data = tuple(b"TesT.WwW.ExamplE.CoM".split(b"."))
+        privres = tuple(b"example.com".split(b"."))
+        self.assertEqual(psl.privatesuffix(data), privres)
 
     def test_compatclass(self):
 
