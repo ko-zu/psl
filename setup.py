@@ -6,7 +6,7 @@ from setuptools import setup
 
 ### version placeholder for release automation
 
-__version__ = "0.10.0"
+__version__ = "1.0.0"
 
 ### Change the minor version before git push to the master branch.
 
@@ -35,7 +35,7 @@ setup(name="publicsuffixlist",
           "Operating System :: OS Independent",
 
         ],
-      python_requires=">=2.6",
+      python_requires=">=3.5",
       extras_require={
           "update": ["requests"],
           "readme": ["pandoc"],

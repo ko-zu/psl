@@ -8,41 +8,40 @@
 #
 
 import os
-import sys
+from collections.abc import Iterable as iterable, ByteString as bytestring
+from typing import Optional, Tuple, Union, Iterable, ByteString
 
 __all__ = ["PublicSuffixList"]
 
-ENCODING = "utf-8"
+ENCODING = "utf8"
+ERRORMODE = "surrogateescape"
 
 PSLURL = "https://publicsuffix.org/list/public_suffix_list.dat"
 
 PSLFILE = os.path.join(os.path.dirname(__file__), "public_suffix_list.dat")
 
-if sys.version_info >= (3, ):
-    # python3.x
-    def u(s):
-        return s if isinstance(s, str) else s.decode(ENCODING)
+BytesTuple = Tuple[bytes, ...]
+Domain = Union[str, BytesTuple]
+RelaxDomain = Union[str, BytesTuple, Iterable[ByteString]]
+RelaxFileSource = Union[Iterable[Union[str, ByteString]], str, ByteString]
 
-    def b(s):
-        return s if isinstance(s, bytes) else s.encode(ENCODING)
-    basestr = str
-    decodablestr = (str, bytes)
-
-else:
-    # python 2.x
-    def u(s):
-        return s if isinstance(s, unicode) else s.decode(ENCODING)
-    def b(s):
-        return s if isinstance(s, str) else s.encode(ENCODING)
-    basestr = basestring
-    decodablestr = basestring
+Labels = Tuple[str, ...]
+AnyStr = Union[str, ByteString]
 
 
-def encode_idn(domain):
+def u(s: AnyStr) -> str:
+    return s if isinstance(s, str) else s.decode(ENCODING, ERRORMODE)
+
+
+def b(s: AnyStr) -> bytes:
+    return bytes(s) if isinstance(s, bytestring) else s.encode(ENCODING, ERRORMODE)
+
+
+def encode_idn(domain: AnyStr) -> str:
     return u(domain).encode("idna").decode("ascii")
 
 
-def decode_idn(domain):
+def decode_idn(domain: AnyStr) -> str:
     return b(domain).decode("idna")
 
 
@@ -50,11 +49,13 @@ class PublicSuffixList(object):
     """ PublicSuffixList parser.
 
     After __init__(), all instance methods become thread-safe.
-    Most methods accept str or unicode as input in Python 2.x, str (not bytes) in Python 3.x.
+    Most methods accept str (not bytes) or tuple of bytes.
     """
 
-    def __init__(self, source=None, accept_unknown=True, accept_encoded_idn=True,
-                 only_icann=False):
+    def __init__(self, source: Optional[RelaxFileSource] = None,
+                 accept_unknown: bool = True,
+                 accept_encoded_idn: bool = True,
+                 only_icann: bool = False):
         """ Parse PSL source file and Return PSL object
 
         source: file (line iterable) object, or flat str to parse. (Default: built-in PSL file)
@@ -81,7 +82,7 @@ class PublicSuffixList(object):
         maxlabel = 0
         section_is_icann = None
 
-        if isinstance(source, decodablestr):
+        if isinstance(source, (str, bytestring)):
             source = source.splitlines()
 
         ln = 0
@@ -115,7 +116,7 @@ class PublicSuffixList(object):
         self._maxlabel = maxlabel
 
     def _joinlabels(self, domain, labels, start, *, keep_case=False):
-        if isinstance(domain, basestr):
+        if isinstance(domain, str):
             if keep_case:
                 return ".".join(domain.split(".")[start:])
             else:
@@ -127,34 +128,32 @@ class PublicSuffixList(object):
             else:
                 return tuple(x.lower() for x in domain[start:])
 
+    def _preparedomain(self, domain) -> Union[Tuple[str, Labels], Tuple[BytesTuple, Labels]]:
 
-    def _preparedomain(self, domain):
-
-        if isinstance(domain, basestr):
+        if isinstance(domain, str):
             # From PSL definition,
             # Empty labels are not permitted, meaning that leading and trailing
             # dots are ignored.
             if domain.endswith("."):
                 domain = domain[:-1]
             labels = domain.lower().split(".")
-            if "" in labels:
-                # not a valid domain
-                return None, None
 
-        elif isinstance(domain, (tuple, list)):
-            # expect as iter of bytes
-            # result as tuple of bytes
-            domain = tuple(x for x in domain)
-            labels = tuple(str(x, errors='surrogateescape').lower()
-                            for x in domain)
-            if "" in labels:
-                return None, None
+        elif isinstance(domain, bytestring):
+            raise TypeError("Only str, Iter[ByteString] are supported.")
+
+        elif isinstance(domain, iterable):
+            domain = tuple(bytes(x) for x in domain)
+            labels = tuple(str(x, ENCODING, ERRORMODE).lower()
+                           for x in domain)
         else:
-            raise TypeError("Only str, tuple<bytes>, list<bytes> are supported.")
+            raise TypeError("Only str, Iter[ByteString] are supported.")
 
+        if "" in labels:
+            # not a valid domain
+            return None, None
         return domain, labels
 
-    def _countpublic(self, labels, accept_unknown=None):
+    def _countpublic(self, labels, accept_unknown=None) -> int:
 
         if accept_unknown is None:
             accept_unknown = self.accept_unknown
@@ -215,7 +214,6 @@ class PublicSuffixList(object):
             if s in self._publicsuffix:
                 return depth
 
-
             # exception rule
             if ("!" + s) in self._publicsuffix:
                 # exception rule has wildcard sibiling.
@@ -229,13 +227,19 @@ class PublicSuffixList(object):
             return 1
         return 0
 
-
-
-    def suffix(self, domain, accept_unknown=None, *, keep_case=False):
+    def suffix(self,
+               domain: RelaxDomain,
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[Domain]:
         """ Alias for privatesuffix """
         return self.privatesuffix(domain, accept_unknown=accept_unknown, keep_case=keep_case)
 
-    def privatesuffix(self, domain, accept_unknown=None, *, keep_case=False):
+    def privatesuffix(self,
+                      domain: RelaxDomain,
+                      accept_unknown: Optional[bool] = None,
+                      *,
+                      keep_case: bool = False) -> Optional[Domain]:
         """ Return shortest suffix assigned for an individual.
 
         domain: str or unicode to parse. (Required)
@@ -255,7 +259,11 @@ class PublicSuffixList(object):
 
         return self._joinlabels(domain, labels, -(publen + 1), keep_case=keep_case)
 
-    def publicsuffix(self, domain, accept_unknown=None, *, keep_case=False):
+    def publicsuffix(self,
+                     domain: RelaxDomain,
+                     accept_unknown: Optional[bool] = None,
+                     *,
+                     keep_case: bool = False) -> Optional[Domain]:
         """ Return longest publically shared suffix.
 
         domain: str or unicode to parse. (Required)
@@ -275,27 +283,32 @@ class PublicSuffixList(object):
 
         return self._joinlabels(domain, labels, -publen, keep_case=keep_case)
 
-    def is_private(self, domain):
+    def is_private(self, domain: RelaxDomain) -> bool:
         """ Return True if domain is private suffix or sub-domain. """
         domain, labels = self._preparedomain(domain)
         publen = self._countpublic(labels)
         return bool(publen and publen < len(labels))
 
-    def is_public(self, domain):
+    def is_public(self, domain: RelaxDomain) -> bool:
         """ Return True if domain is publix suffix. """
         domain, labels = self._preparedomain(domain)
         publen = self._countpublic(labels)
         return bool(publen and publen == len(labels))
 
-    def privateparts(self, domain, *, keep_case=False):
+    def privateparts(self,
+                     domain: RelaxDomain,
+                     *,
+                     accept_unknown: Optional[bool] = None,
+                     keep_case: bool = False) -> Optional[Tuple[Domain, ...]]:
         """ Return tuple of subdomain labels and the private suffix. """
         domain, labels = self._preparedomain(domain)
-        publen = self._countpublic(labels)
+        publen = self._countpublic(labels, accept_unknown)
         if not publen or len(labels) < publen + 1:
             return None
 
-        priv = self._joinlabels(domain, labels, -(publen+1), keep_case=keep_case)
-        if isinstance(domain, basestr):
+        priv = self._joinlabels(
+            domain, labels, -(publen+1), keep_case=keep_case)
+        if isinstance(domain, str):
             if keep_case:
                 return tuple(domain.split(".")[:-(publen+1)]) + (priv,)
             else:
@@ -306,7 +319,12 @@ class PublicSuffixList(object):
             else:
                 return tuple(x.lower() for x in domain[:-(publen+1)]) + (priv,)
 
-    def subdomain(self, domain, depth, *, keep_case=False):
+    def subdomain(self,
+                  domain: RelaxDomain,
+                  depth: int,
+                  *,
+                  accept_unknown: Optional[bool] = None,
+                  keep_case: bool = False) -> Optional[Domain]:
         """ Return so-called subdomain of specified depth in the private suffix. """
         domain, labels = self._preparedomain(domain)
         publen = self._countpublic(labels)
@@ -314,4 +332,3 @@ class PublicSuffixList(object):
             return None
         else:
             return self._joinlabels(domain, labels, -(publen + 1 + depth), keep_case=keep_case)
-

@@ -234,11 +234,13 @@ invalid
         data_list = list(data)
         self.assertEqual(psl.privatesuffix(data_list), privres)
 
-    def test_bytesgen_unsupported(self):
+    def test_bytesgen_resulttype(self):
         psl = self.psl
         data = bytestuple(b"www.example.com")
+        privres = bytestuple(b"example.com")
         data_gen = (x for x in data)
-        self.assertRaises(TypeError, lambda: psl.suffix(data_gen))
+
+        self.assertEqual(psl.privatesuffix(data_gen), privres)
 
     def test_bytestuple_lowercase(self):
         psl = self.psl
