@@ -1,128 +1,140 @@
 publicsuffixlist
 ===
 
-[Public Suffix List](https://publicsuffix.org/) parser implementation for Python 2.6+/3.x.
+[Public Suffix List](https://publicsuffix.org/) parser implementation for
+Python 3.5+.
 
 - Compliant with [TEST DATA](https://raw.githubusercontent.com/publicsuffix/list/master/tests/test_psl.txt)
-- Support IDN (unicode or punycoded).
-- Support Python2.6+ and Python 3.x
-- Shipped with built-in PSL and the updater script.
-- Written in Pure Python. No library dependencies.
+- Supports IDN (unicode and punycoded).
+- Supports Python3.5+
+- Shipped with built-in PSL and an updater script.
+- Written in Pure Python with no library dependencies.
 
-[![Build Status](https://app.travis-ci.com/ko-zu/psl.svg?branch=master)](https://app.travis-ci.com/ko-zu/psl)
+[![publish package](https://github.com/ko-zu/psl/actions/workflows/autorelease.yml/badge.svg)](https://github.com/ko-zu/psl/actions/workflows/autorelease.yml)
 [![PyPI version](https://badge.fury.io/py/publicsuffixlist.svg)](https://badge.fury.io/py/publicsuffixlist)
 [![Downloads](http://pepy.tech/badge/publicsuffixlist)](http://pepy.tech/project/publicsuffixlist)
 
 Install
 ===
-`publicsuffixlist` can be installed via `pip` or `pip3`.
+`publicsuffixlist` can be installed via `pip`.
 ```
-$ sudo pip install publicsuffixlist
-```
-
-If you are in a bit old distributions (RHEL/CentOS6.x), you may need to update `pip` itself before install.
-```
-$ sudo pip install -U pip
+$ pip install publicsuffixlist
 ```
 
 Usage
 ===
 
+Basic Usage:
+
 ```python
 from publicsuffixlist import PublicSuffixList
 
 psl = PublicSuffixList()
-# uses built-in PSL file
+# Uses built-in PSL file
 
-psl.publicsuffix("www.example.com")   # "com"
-# longest public suffix part
+print(psl.publicsuffix("www.example.com"))   # "com"
+# the longest public suffix part
 
-psl.privatesuffix("www.example.com")  # "example.com"
-# shortest domain assigned for a registrant
+print(psl.privatesuffix("www.example.com"))  # "example.com"
+# the shortest domain assigned for a registrant
 
-psl.privatesuffix("com") # None
-# None if no private (non-public) part found
+print(psl.privatesuffix("com")) # None
+# Returns None if no private (non-public) part found
 
+print(psl.publicsuffix("www.example.unknownnewtld")) # "unknownnewtld"
+# New TLDs are valid public suffix by default
 
-psl.publicsuffix("www.example.unknownnewtld") # "unknownnewtld"
-# new TLDs are valid public suffix by default
+print(psl.publicsuffix("www.example.香港")) #"香港"
+# Accepts unicode
 
-psl.publicsuffix(u"www.example.香港")   # u"香港"
-# accept unicode
+print(psl.publicsuffix("www.example.xn--j6w193g")) # "xn--j6w193g"
+# Accepts Punycode IDNs by default
 
-psl.publicsuffix("www.example.xn--j6w193g") # "xn--j6w193g"
-# accept punycoded IDNs by default
+print(psl.privatesuffix("WWW.EXAMPLE.COM")) # "example.com"
+# Returns in lowercase by default
+
+print(psl.privatesuffix("WWW.EXAMPLE.COM", keep_case=True) # "EXAMPLE.COM"
+# kwarg `keep_case=True` to disable the case conversion
 ```
 
-Latest PSL can be passed as a file like line-iterable object.
+The latest PSL is packaged once a day. If you need to parse your own version,
+it can be passed as a file-like iterable object, or just a `str`:
+
 ```python
 with open("latest_psl.dat", "rb") as f:
     psl = PublicSuffixList(f)
 ```
 
-Works with both Python 2.x and 3.x.
+The unittest and PSL updater can be invoked as module.
 ```
-$ python2 setup.py test
-$ python3 setup.py test
+$ python -m publicsuffixlist.test
+$ python -m publicsuffixlist.update
 ```
 
-Drop-in compatibility code to replace [publicsuffix](https://pypi.org/project/publicsuffix/)
+Additional convenient methods:
+
 ```python
-# from publicsuffix import PublicSuffixList
-from publicsuffixlist.compat import PublicSuffixList
-
-psl = PublicSuffixList()
-psl.suffix("www.example.com")   # return "example.com"
-psl.suffix("com")               # return "" (as str, not None)
+print(psl.is_private("example.com"))  # True
+print(psl.is_public("example.com"))   # False
+print(psl.privateparts("aaa.www.example.com")) # ("aaa", "www", "example.com")
+print(psl.subdomain("aaa.www.example.com", depth=1)) # "www.example.com"
 ```
-
-Some convenient methods available.
-```python
-psl.is_private("example.com")  # True
-psl.privateparts("aaa.www.example.com") # ("aaa", "www", "example.com")
-psl.subdomain("aaa.www.example.com", depth=1) # "www.example.com"
-```
-
 
 Limitation
 ===
-`publicsuffixlist` do NOT provide domain name validation.
-In DNS protocol, most of 8-bit characters are acceptable label of domain name. ICANN compliant registries do not accept domain names that have `_` (underscore) but hostname may have. DMARC records, for example.
 
-Users need to confirm the input is valid based on the users' context.
+#### Domain Label Validation
 
-Partially encoded (Unicode-mixed) Punycode is not supported because of very slow Punycode en/decoding and unpredictable encoding of results.
-If you are not sure the input is valid Punycode or not, you should do `unknowndomain.encode("idna")` which is idempotence.
+`publicsuffixlist` do NOT provide domain name and label validation.
+In the DNS protocol, most 8-bit characters are acceptable as labels of domain
+names. While ICANN-compliant registries do not accept domain names containing
+underscores (_), hostnames may include them. For example, DMARC records can
+contain underscores. Users must confirm that the input domain names are valid
+based on their specific context.
 
-ICANN and private suffixes
-===
-The public suffix list contains both suffixes for ICANN domains and private suffixes. Using the flag `only_icann` the private suffixes can be deactivated:
-```
->>> psl = PublicSuffixList()
->>> psl.publicsuffix("example.priv.at")
-'priv.at'
->>> psl = PublicSuffixList(only_icann=True)
->>> psl.publicsuffix("example.priv.at")
-'at'
+#### Punycode Handling
+Partially encoded (Unicode-mixed) Punycode is not supported due to very slow
+Punycode encoding/decoding and unpredictable encoding results. If you are
+unsure whether an input is valid Punycode, you should use:
+`unknowndomain.encode("idna").decode("ascii")`. This method, converting to idna
+is idempotent.
+
+#### Handling Arbitrary Binary
+If you need to accept arbitrary or malicious binary data, it can be passed as a
+tuple of bytes. Note that the returned bytes may include byte patterns that
+cannot be decoded or represented as a standard domain name.
+Example:
+```python
+psl.privatesuffix((b"a.a", b"a.example\xff", b"com"))  # (b"a.example\xff", b"com")
 ```
 
 License
 ===
 
 - This module is licensed under Mozilla Public License 2.0.
-- Public Suffix List maintained by Mozilla Foundation is licensed under Mozilla Public License 2.0.
-- PSL testcase dataset is public domain (CC0).
+- The Public Suffix List maintained by the Mozilla Foundation is licensed under
+  the Mozilla Public License 2.0.
+- The PSL testcase dataset is in the public domain (CC0).
 
 
 Development / Packaging
 ===
-This module and its packaging workflow are maintained in the author's repository located at https://github.com/ko-zu/psl.
-A new package, which includes the latest PSL file, is automatically generated and uploaded to PyPI.
-The last part of the version number represents the release date, for instance, `0.10.1.20230331`.
+This module and its packaging workflow are maintained in the author's
+repository located at https://github.com/ko-zu/psl.
+
+A new package, which includes the latest PSL file, is automatically generated
+and uploaded to PyPI. The last part of the version number represents the
+release date. For example, `0.10.1.20230331` indicates a release date of March
+31, 2023.
+
+This package dropped support for Python 2.7 and Python 3.4 or prior versions at
+the version 1.0.0 release in June 2024. The last version that works on Python
+2.x is 0.10.0.x.
 
 
 Source / Link
 ===
 
-- Git repository on GitHub (https://github.com/ko-zu/psl)
-- PyPI (https://pypi.org/project/publicsuffixlist/)
+- GitHub repository: (https://github.com/ko-zu/psl)
+- PyPI: (https://pypi.org/project/publicsuffixlist/)
+
