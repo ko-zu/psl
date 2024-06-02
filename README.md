@@ -1,3 +1,22 @@
+Notice
+===
+This module is **Dropping Support for Python 2.7 and 3.4**
+
+In the upcoming version 1.0.0, support for Python 2.7 and 3.4 will be
+discontinued. Version 0.10.x (or auto-released versions with the .yyyymmdd
+suffix) will be the last to support Python 2.7.
+
+The minimum requirement for new versions will be **Python 3.5 or later.**
+
+The new version will include type hinting to enhance API stability. The updated
+code is currently available in the devel branch.
+https://github.com/ko-zu/psl/tree/devel
+
+If you know of any users still relying on this module with Python 2.7, please
+comment on github issue.
+https://github.com/ko-zu/psl/issues/30
+
+
 publicsuffixlist
 ===
 
