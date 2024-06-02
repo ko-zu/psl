@@ -167,32 +167,25 @@ class PublicSuffixList(object):
         if ll == 1 and accept_unknown:
             return 1
 
-        # There is the PSL algorithm definition,
-        # https://github.com/publicsuffix/list/wiki/Format
+        # There is confusion in rule evaluation.
         #
-        # A domain is said to match a rule if and only if all of the following
-        # conditions are met:
-        # 1. When the domain and rule are split into corresponding labels, that
-        # the domain contains as many or more labels than the rule.
-        # 2. Beginning with the right-most labels of both the domain and the
-        # rule, and continuing for all labels in the rule, one finds that for
-        # every pair, either they are identical, or that the label from the
-        # rule is "*".
-        #
-        # Bacause of rule 1, `foo.com` does not match `*.foo.com`.
-        #
-        # However, there is some confusion in rule evaluation.
-        # test_psl.txt states that city.kobe.jp -> city.kobe.jp
+        # The test data, test_psl.txt states that
+        # city.kobe.jp -> city.kobe.jp
         # so kobe.jp is public, although kobe.jp is not listed.  That means
         # test_psl.txt assumes !city.example.com or *.example.com implicitly
         # declares example.com as also public.
         #
-        # This module dropped support for the conflicting test case.
+        # This implicit declaration of wildcard is required and checked by
+        # the linter.
+        # https://github.com/publicsuffix/list/blame/de747b657fb0f479667015423c12f98fd47ebf1d/linter/pslint.py#L230
+        #
+        # The PSL wiki had listed a wrong example regarding the wildcard.
+        # This should be resolved by issue:
+        # https://github.com/publicsuffix/list/issues/1989
 
         # We start from longest to shortcircuit
         startfrom = max(0, ll - (self._maxlabel + 1))
 
-        excluded = True
         for i in range(startfrom, ll):
             depth = ll - i
             s = ".".join(labels[-depth:])
@@ -200,28 +193,25 @@ class PublicSuffixList(object):
             # the check order must be wild > exact > exception
             # this is required to backtrack subdomain wildcard
 
+            # exception rule
+            if ("!" + s) in self._publicsuffix:
+                # exception rule has wildcard sibiling.
+                # and the wildcard has implicit root.
+                return depth - 1
+
             # wildcard match
             if ("*." + s) in self._publicsuffix:
                 # if we have subdomain, that must be checked against exception
-                # rule.
-                if i > startfrom and not excluded:
+                # rule. The backtrack check was performed in the previous loop.
+                if i > 0:
                     return depth + 1
 
-                # If this is entire match, it is not public from the PSL example.
-                # ignore it.
+                # If this is entire match, it is implicit root of wildcard.
+                return depth
 
             # exact match
             if s in self._publicsuffix:
                 return depth
-
-            # exception rule
-            if ("!" + s) in self._publicsuffix:
-                # exception rule has wildcard sibiling.
-                # Although the test case assumes it has implicit public domain on the root,
-                # in the PSL definition, the next is not always public.
-                excluded = True
-            else:
-                excluded = False
 
         if accept_unknown:
             return 1
