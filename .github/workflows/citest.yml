@@ -1,0 +1,43 @@
+name: CI test
+
+on:
+  push:
+    branches-ignore:
+      - autorelease
+  pull_request:
+    branches:
+      - devel
+
+jobs:
+  test-oldpython:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.5
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.5"
+        env:
+          PIP_TRUSTED_HOST: "pypi.python.org pypi.org files.pythonhosted.org"
+          # workaround for certificate incompatibility
+      - name: Run test
+        run: |
+          pip install .
+          python -m publicsuffixlist.test
+
+  test:
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        python-version: ["3", "3.10"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run test
+        run: |
+          pip install .
+          python -m publicsuffixlist.test
+
