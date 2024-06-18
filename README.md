@@ -10,7 +10,8 @@ Python 3.5+.
 - Shipped with built-in PSL and an updater script.
 - Written in Pure Python with no library dependencies.
 
-[![publish package](https://github.com/ko-zu/psl/actions/workflows/autorelease.yml/badge.svg)](https://github.com/ko-zu/psl/actions/workflows/autorelease.yml)
+[![publish package](https://github.com/ko-zu/psl/actions/workflows/autorelease.yml/badge.svg?branch=master)](https://github.com/ko-zu/psl/actions/workflows/autorelease.yml)
+[![CI test](https://github.com/ko-zu/psl/actions/workflows/citest.yml/badge.svg?branch=devel)](https://github.com/ko-zu/psl/actions/workflows/citest.yml)
 [![PyPI version](https://badge.fury.io/py/publicsuffixlist.svg)](https://badge.fury.io/py/publicsuffixlist)
 [![Downloads](http://pepy.tech/badge/publicsuffixlist)](http://pepy.tech/project/publicsuffixlist)
 
