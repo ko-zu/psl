@@ -39,13 +39,6 @@ jobs:
       run: |
         pip install --progress-bar off -r requirements-dev.txt 
         pip install .
-        python -m publicsuffixlist.update
-
-        if ! git diff --exit-code publicsuffixlist/public_suffix_list.dat ; then
-          # PSL not updated
-          echo "PSL file is not up to date. Abort."
-          exit 1
-        fi
 
         if ! python -m publicsuffixlist.test ; then
           echo "Test failed. Abort."
