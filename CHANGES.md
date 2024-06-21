@@ -1,3 +1,7 @@
+### 1.0.1 (2024-06-22)
+Fix internal logic where domain name passed as a tuple of bytes, that contains
+UTF-8 encoded non-ascii chars, unintentionally matched PSL. Fixes #31.
+
 ### 1.0.0 (2024-06-20)
 
 This version drops support for Python 2.x and 3.4.
