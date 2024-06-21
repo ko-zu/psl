@@ -208,6 +208,45 @@ invalid
         self.assertEqual(psl.publicsuffix(data), pubres)
         self.assertEqual(psl.privatesuffix(data), privres)
 
+    def test_bytestuple_punycode(self):
+        source = """
+example
+例.example
+"""
+        psl = PublicSuffixList(source)
+        # punycoded ASCII should match
+        data = bytestuple("aaa.www.例.example".encode("idna"))
+        pubres  = data[-2:] # xn--fsq.example
+        privres = data[-3:]
+        self.assertEqual(psl.publicsuffix(data), pubres)
+        self.assertEqual(psl.privatesuffix(data), privres)
+
+    def test_bytestuple_utf8(self):
+        source = """
+example
+例.example
+"""
+        psl = PublicSuffixList(source)
+        # UTF-8 encoded bytes should NOT match
+        data = bytestuple("aaa.www.例.example".encode("utf8"))
+        pubres  = data[-1:] # example
+        privres = data[-2:]
+        self.assertEqual(psl.publicsuffix(data), pubres)
+        self.assertEqual(psl.privatesuffix(data), privres)
+
+    def test_bytestuple_otherencoding(self):
+        source = """
+example
+例.example
+"""
+        psl = PublicSuffixList(source.splitlines())
+        # Shift_JIS encoded bytes should NOT match
+        data = bytestuple("aaa.www.例.example".encode("sjis"))
+        pubres  = data[-1:] # example
+        privres = data[-2:]
+        self.assertEqual(psl.publicsuffix(data), pubres)
+        self.assertEqual(psl.privatesuffix(data), privres)
+
     def test_bytestuple_empty(self):
         psl = self.psl
         self.assertEqual(psl.publicsuffix(()), None)

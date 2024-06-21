@@ -143,7 +143,7 @@ class PublicSuffixList(object):
 
         elif isinstance(domain, iterable):
             domain = tuple(bytes(x) for x in domain)
-            labels = tuple(str(x, ENCODING, ERRORMODE).lower()
+            labels = tuple(str(x, "ascii", ERRORMODE).lower()
                            for x in domain)
         else:
             raise TypeError("Only str, Iter[ByteString] are supported.")

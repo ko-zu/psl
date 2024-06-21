@@ -107,6 +107,12 @@ cannot be decoded or represented as a standard domain name.
 Example:
 ```python
 psl.privatesuffix((b"a.a", b"a.example\xff", b"com"))  # (b"a.example\xff", b"com")
+
+# Note that IDNs must be punycoded when passed as tuple of bytes.
+psl = PublicSuffixList("例.example")
+psl.publicsuffix((b"xn--fsq", b"example"))  # (b"xn--fsq", b"example")
+# UTF-8 encoded bytes of "例" do not match.
+psl.publicsuffix((b"\xe4\xbe\x8b", b"example"))  # (b"example",)
 ```
 
 License
