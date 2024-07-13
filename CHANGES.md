@@ -1,3 +1,7 @@
+### 1.0.2 (2024-07-13)
+- Use @typing.overload to indicate str-to-str domain input/output. #32.
+- Address deprecation of ByteString in python 3.14.
+
 ### 1.0.1 (2024-06-22)
 Fix internal logic where domain name passed as a tuple of bytes, that contains
 UTF-8 encoded non-ascii chars, unintentionally matched PSL. Fixes #31.
