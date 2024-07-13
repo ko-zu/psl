@@ -9,7 +9,7 @@
 
 import os
 from collections.abc import Iterable as iterable, ByteString as bytestring
-from typing import Optional, Tuple, Union, Iterable, ByteString
+from typing import Optional, Tuple, Union, Iterable, ByteString, overload
 
 __all__ = ["PublicSuffixList"]
 
@@ -217,6 +217,18 @@ class PublicSuffixList(object):
             return 1
         return 0
 
+    @overload
+    def suffix(self,
+               domain: str,
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[str]: ...
+    @overload
+    def suffix(self,
+               domain: Union[BytesTuple, Iterable[ByteString]],
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[BytesTuple]: ...
     def suffix(self,
                domain: RelaxDomain,
                accept_unknown: Optional[bool] = None,
@@ -225,6 +237,18 @@ class PublicSuffixList(object):
         """ Alias for privatesuffix """
         return self.privatesuffix(domain, accept_unknown=accept_unknown, keep_case=keep_case)
 
+    @overload
+    def privatesuffix(self,
+               domain: str,
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[str]: ...
+    @overload
+    def privatesuffix(self,
+               domain: Union[BytesTuple, Iterable[ByteString]],
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[BytesTuple]: ...
     def privatesuffix(self,
                       domain: RelaxDomain,
                       accept_unknown: Optional[bool] = None,
@@ -249,6 +273,18 @@ class PublicSuffixList(object):
 
         return self._joinlabels(domain, labels, -(publen + 1), keep_case=keep_case)
 
+    @overload
+    def publicsuffix(self,
+               domain: str,
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[str]: ...
+    @overload
+    def publicsuffix(self,
+               domain: Union[BytesTuple, Iterable[ByteString]],
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[BytesTuple]: ...
     def publicsuffix(self,
                      domain: RelaxDomain,
                      accept_unknown: Optional[bool] = None,
@@ -285,6 +321,18 @@ class PublicSuffixList(object):
         publen = self._countpublic(labels)
         return bool(publen and publen == len(labels))
 
+    @overload
+    def privateparts(self,
+               domain: str,
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[Tuple[str, ...]]: ...
+    @overload
+    def privateparts(self,
+               domain: Union[BytesTuple, Iterable[ByteString]],
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[Tuple[BytesTuple, ...]]: ...
     def privateparts(self,
                      domain: RelaxDomain,
                      *,
@@ -309,6 +357,18 @@ class PublicSuffixList(object):
             else:
                 return tuple(x.lower() for x in domain[:-(publen+1)]) + (priv,)
 
+    @overload
+    def subdomain(self,
+               domain: str,
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[str]: ...
+    @overload
+    def subdomain(self,
+               domain: Union[BytesTuple, Iterable[ByteString]],
+               accept_unknown: Optional[bool] = None,
+               *,
+               keep_case: bool = False) -> Optional[BytesTuple]: ...
     def subdomain(self,
                   domain: RelaxDomain,
                   depth: int,
