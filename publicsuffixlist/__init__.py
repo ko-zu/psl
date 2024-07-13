@@ -8,8 +8,8 @@
 #
 
 import os
-from collections.abc import Iterable as iterable, ByteString as bytestring
-from typing import Optional, Tuple, Union, Iterable, ByteString, overload
+from collections.abc import Iterable as iterable
+from typing import Optional, Tuple, Union, Iterable, overload
 
 __all__ = ["PublicSuffixList"]
 
@@ -21,6 +21,7 @@ PSLURL = "https://publicsuffix.org/list/public_suffix_list.dat"
 PSLFILE = os.path.join(os.path.dirname(__file__), "public_suffix_list.dat")
 
 BytesTuple = Tuple[bytes, ...]
+ByteString = Union[bytes, bytearray]
 Domain = Union[str, BytesTuple]
 RelaxDomain = Union[str, BytesTuple, Iterable[ByteString]]
 RelaxFileSource = Union[Iterable[Union[str, ByteString]], str, ByteString]
@@ -34,7 +35,7 @@ def u(s: AnyStr) -> str:
 
 
 def b(s: AnyStr) -> bytes:
-    return bytes(s) if isinstance(s, bytestring) else s.encode(ENCODING, ERRORMODE)
+    return bytes(s) if isinstance(s, (bytes, bytearray)) else s.encode(ENCODING, ERRORMODE)
 
 
 def encode_idn(domain: AnyStr) -> str:
@@ -82,7 +83,7 @@ class PublicSuffixList(object):
         maxlabel = 0
         section_is_icann = None
 
-        if isinstance(source, (str, bytestring)):
+        if isinstance(source, (str, bytes, bytearray)):
             source = source.splitlines()
 
         ln = 0
@@ -138,7 +139,7 @@ class PublicSuffixList(object):
                 domain = domain[:-1]
             labels = domain.lower().split(".")
 
-        elif isinstance(domain, bytestring):
+        elif isinstance(domain, (bytes, bytearray)):
             raise TypeError("Only str, Iter[ByteString] are supported.")
 
         elif isinstance(domain, iterable):
