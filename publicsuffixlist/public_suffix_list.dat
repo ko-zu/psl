@@ -5,8 +5,8 @@
 // Please pull this list from, and only from https://publicsuffix.org/list/public_suffix_list.dat,
 // rather than any other VCS sites. Pulling from any other URL is not guaranteed to be supported.
 
-// VERSION: 2026-08-29_12-33-06_UTC
-// COMMIT: e8c9a2b2b2856b6449999dd0ec0d118f364ed0cd
+// VERSION: 2026-09-01_16-31-31_UTC
+// COMMIT: 8066559ea05817067ce9ed501566efb8d8899f53
 
 // Instructions on pulling and using this list can be found at https://publicsuffix.org/list/.
 
@@ -14307,8 +14307,6 @@ ryd.wafaicloud.com
 j.scaleforce.com.cy
 jelastic.dogado.eu
 fi.cloudplatform.fi
-demo.datacenter.fi
-paas.datacenter.fi
 jele.host
 mircloud.host
 paas.beebyte.io
@@ -14451,6 +14449,11 @@ shiptoday.build
 laravel.cloud
 on-forge.com
 on-vapor.com
+
+// Last Mile Labs, Inc : https://eth.limo
+// Submitted by eth.limo team <security@eth.limo>
+*.eth.limo
+*.eth.link
 
 // LCube - Professional hosting e.K. : https://www.lcube-webhosting.de
 // Submitted by Lars Laehn <info@lcube.de>
@@ -16345,12 +16348,6 @@ grok.me
 // Submitted by Julian Uphoff <publicsuffixlist@xenoncloud.net>
 *.xenonconnect.de
 half.host
-
-// XnBay Technology : http://www.xnbay.com/
-// Submitted by XnBay Developer <developer.xncloud@gmail.com>
-xnbay.com
-u2.xnbay.com
-u2-local.xnbay.com
 
 // XS4ALL Internet bv : https://www.xs4all.nl/
 // Submitted by Daniel Mostertman <unixbeheer+publicsuffix@xs4all.net>
