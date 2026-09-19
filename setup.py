@@ -17,7 +17,8 @@ setup(name="publicsuffixlist",
       version=__version__,
       packages=["publicsuffixlist"],
       package_data={
-          "publicsuffixlist": [
+        "publicsuffixlist": [
+              "py.typed",
               "public_suffix_list.dat",
               "test_psl.txt",
           ]},
