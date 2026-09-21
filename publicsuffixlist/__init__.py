@@ -382,14 +382,16 @@ class PublicSuffixList:
     @overload
     def subdomain(self,
                domain: str,
-               accept_unknown: Optional[bool] = None,
+               depth: int,
                *,
+               accept_unknown: Optional[bool] = None,
                keep_case: bool = False) -> Optional[str]: ...
     @overload
     def subdomain(self,
                domain: Union[BytesTuple, Iterable[ByteString]],
-               accept_unknown: Optional[bool] = None,
+               depth: int,
                *,
+               accept_unknown: Optional[bool] = None,
                keep_case: bool = False) -> Optional[BytesTuple]: ...
     def subdomain(self,
                   domain: RelaxDomain,
