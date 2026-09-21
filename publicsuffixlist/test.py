@@ -182,8 +182,8 @@ invalid
 
             for line in f:
                 ln += 1
-                l = line.decode("utf-8")
-                m = regex.match(l)
+                text = line.decode("utf-8")
+                m = regex.match(text)
                 if not m:
                     continue
 

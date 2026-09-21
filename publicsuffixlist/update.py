@@ -37,7 +37,8 @@ def updatePSL(psl_file=PSLFILE):
         f.write(r.content)
 
     with open(psl_file + ".swp", "rb") as f:
-        psl = PublicSuffixList(f)
+        # Constructing the object validates that the downloaded file parses.
+        _psl = PublicSuffixList(f)
 
     try:
         os.replace(psl_file + ".swp", psl_file)
