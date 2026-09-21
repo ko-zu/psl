@@ -358,6 +358,9 @@ example
         self.assertEqual(psl.subdomain("Com", depth=0), None)
         self.assertEqual(psl.subdomain("Com", depth=1), None)
 
+        # invalid domain
+        self.assertEqual(psl.subdomain("www..invalid", depth=1), None)
+
     def test_subdomain_keep_case(self):
         psl = self.psl
         self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=1, keep_case=True),

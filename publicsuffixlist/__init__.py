@@ -394,7 +394,11 @@ class PublicSuffixList:
                   accept_unknown: Optional[bool] = None,
                   keep_case: bool = False) -> Optional[Domain]:
         """ Return so-called subdomain of specified depth in the private suffix. """
-        domain, labels = self._preparedomain(domain)
+        prepared = self._preparedomain(domain)
+        if prepared is None:
+            return None
+        domain, labels = prepared
+
         publen = self._countpublic(labels)
         if len(labels) < publen + 1 + depth:
             return None
