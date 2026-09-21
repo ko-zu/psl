@@ -13,6 +13,8 @@ from typing import Optional, Tuple, Union, Iterable, overload
 
 __all__ = ["PublicSuffixList"]
 
+__version__ = "1.0.2"
+
 ENCODING = "utf8"
 ERRORMODE = "surrogateescape"
 

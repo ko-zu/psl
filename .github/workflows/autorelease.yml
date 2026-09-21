@@ -47,7 +47,7 @@ jobs:
      
     - name: Tag and release new version
       run: |
-        BASEVERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)"$/\1/p' setup.py)
+        BASEVERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)"$/\1/p' publicsuffixlist/__init__.py)
         [[ -z "$BASEVERSION" ]] && exit 1
         echo "BASEVERSION=${BASEVERSION}" >> $GITHUB_ENV
         TAG=v${BASEVERSION}
@@ -59,23 +59,22 @@ jobs:
         # Create refreshed workbranch.
         git checkout origin/$BASEBRANCH -b $WORKBRANCH
 
-        VERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)"$/\1/p' setup.py)
+        VERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)"$/\1/p' publicsuffixlist/__init__.py)
         NEWDATE=$(date -u "+%Y%m%d")
         NEWVERSION=${VERSION}.${NEWDATE}
         NEWTAG=v${NEWVERSION}-gha
         
-        sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' setup.py
+        sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' publicsuffixlist/__init__.py
         
         pip install .
-        python setup.py sdist --formats=gztar
-        python setup.py bdist_wheel --universal
+        python -m build
         
         if ! python -m publicsuffixlist.test ; then
           echo "Test failed. Abort."
           exit 1
         fi
 
-        git add setup.py publicsuffixlist/public_suffix_list.dat
+        git add publicsuffixlist/__init__.py publicsuffixlist/public_suffix_list.dat
         git commit -m "Automated release: ${NEWTAG}"
         git push -f origin $WORKBRANCH
         git tag ${NEWTAG}
@@ -119,23 +118,22 @@ jobs:
           exit 0
         fi
 
-        VERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)\.[0-9]+"$/\1/p' setup.py)
+        VERSION=$(sed -nr 's/^__version__ = "([0-9\.]+)\.[0-9]+"$/\1/p' publicsuffixlist/__init__.py)
         NEWDATE=$(date -u "+%Y%m%d")
         NEWVERSION=${VERSION}.${NEWDATE}
         NEWTAG=v${NEWVERSION}-gha
         
-        sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' setup.py
+        sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' publicsuffixlist/__init__.py
         
         pip install .
-        python setup.py sdist --formats=gztar
-        python setup.py bdist_wheel --universal
+        python -m build
         
         if ! python -m publicsuffixlist.test ; then
           echo "Test failed. Abort."
           exit 1
         fi
 
-        git add setup.py publicsuffixlist/public_suffix_list.dat
+        git add publicsuffixlist/__init__.py publicsuffixlist/public_suffix_list.dat
         git commit -m "Automated release: ${NEWTAG}"
         git push -f origin $WORKBRANCH
         git tag ${NEWTAG}

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "publicsuffixlist"
-version = "1.0.2"
+dynamic = ["version"]
 description = "publicsuffixlist implement"
 readme = "README.md"
 requires-python = ">=3.5"
@@ -40,6 +40,9 @@ dev = [
     "pip",
     "setuptools",
 ]
+
+[tool.hatch.version]
+path = "publicsuffixlist/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["publicsuffixlist"]

@@ -3,4 +3,5 @@ twine
 wheel
 pip
 setuptools
+build
 
