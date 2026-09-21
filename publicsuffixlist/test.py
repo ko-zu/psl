@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2014 ko-zu <causeless@gmail.com>
 #
@@ -12,6 +11,7 @@ import re
 import unittest
 
 from publicsuffixlist import PublicSuffixList, b, encode_idn, u
+
 
 def bytestuple(x):
     return tuple(bytes(x).split(b'.'))
@@ -190,7 +190,7 @@ invalid
                 arg = m.group(1).strip("'")
                 res = None if m.group(2) == "null" else m.group(2).strip("'")
 
-                self.assertEqual(self.psl.suffix(arg), res, "in line {0}: {1}".format(ln, line.strip()))
+                self.assertEqual(self.psl.suffix(arg), res, f"in line {ln}: {line.strip()}")
 
     def test_typeerror(self):
 
@@ -228,7 +228,7 @@ example
 """
         psl = PublicSuffixList(source)
         # UTF-8 encoded bytes should NOT match
-        data = bytestuple("aaa.www.例.example".encode("utf8"))
+        data = bytestuple("aaa.www.例.example".encode())
         pubres  = data[-1:] # example
         privres = data[-2:]
         self.assertEqual(psl.publicsuffix(data), pubres)

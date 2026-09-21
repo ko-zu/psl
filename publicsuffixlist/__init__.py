@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2014 ko-zu <causeless@gmail.com>
 #
@@ -9,7 +8,7 @@
 
 import os
 from collections.abc import Iterable as iterable
-from typing import Optional, Tuple, Union, Iterable, overload
+from typing import Iterable, Optional, Tuple, Union, overload
 
 __all__ = ["PublicSuffixList"]
 
@@ -48,7 +47,7 @@ def decode_idn(domain: AnyStr) -> str:
     return b(domain).decode("idna")
 
 
-class PublicSuffixList(object):
+class PublicSuffixList:
     """ PublicSuffixList parser.
 
     After __init__(), all instance methods become thread-safe.

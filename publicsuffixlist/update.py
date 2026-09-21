@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright 2014 ko-zu <causeless@gmail.com>
 #
@@ -8,7 +7,6 @@
 #
 import calendar
 import os
-import time
 from email.utils import parsedate
 
 from publicsuffixlist import PSLFILE, PSLURL, PublicSuffixList
