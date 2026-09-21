@@ -44,8 +44,11 @@ def updatePSL(psl_file=PSLFILE):
         os.rename(psl_file + ".swp", psl_file)
 
     if lastmod:
-        t = calendar.timegm(parsedate(lastmod))
-        os.utime(psl_file, (t, t))
+        # parsedate returns None for a malformed Last-Modified header.
+        parsed = parsedate(lastmod)
+        if parsed is not None:
+            t = calendar.timegm(parsed)
+            os.utime(psl_file, (t, t))
 
     print("PSL updated")
     if lastmod:
