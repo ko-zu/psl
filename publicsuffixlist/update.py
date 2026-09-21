@@ -12,7 +12,7 @@ from email.utils import parsedate
 from publicsuffixlist import PSLFILE, PSLURL, PublicSuffixList
 
 
-def updatePSL(psl_file=PSLFILE):
+def updatePSL(psl_file: str = PSLFILE) -> None:
     """ Updates a local copy of PSL file
 
     :param psl_file: path for the file to store the list. Default: PSLFILE

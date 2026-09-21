@@ -15,7 +15,7 @@ __all__ = ["PublicSuffixList"]
 class PublicSuffixList(PSL):
     """ Drop in compatibility class to emulate publicsuffix module. """
 
-    def get_public_suffix(self, domain):
+    def get_public_suffix(self, domain: str) -> str:
         """ Return shortest private suffix or "". """
 
         return self.privatesuffix(domain) or ""
@@ -24,7 +24,7 @@ class PublicSuffixList(PSL):
 class UnsafePublicSuffixList(PSL):
     """ More accurate compatibility class to emulate publicsuffix module. """
 
-    def get_public_suffix(self, domain):
+    def get_public_suffix(self, domain: str) -> str:
         """ Return shortest private suffix or longest public suffix. """
 
         return self.privatesuffix(domain) or self.publicsuffix(domain) or ""
