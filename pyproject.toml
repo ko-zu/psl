@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "publicsuffixlist"
+version = "1.0.2"
+description = "publicsuffixlist implement"
+readme = "README.md"
+requires-python = ">=3.5"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+authors = [
+    { name = "ko-zu", email = "causeless@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Internet :: Name Service (DNS)",
+    "Topic :: Text Processing :: Filters",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/ko-zu/psl"
+Repository = "https://github.com/ko-zu/psl"
+
+[project.optional-dependencies]
+update = ["requests"]
+readme = ["pandoc"]
+
+[project.scripts]
+publicsuffixlist-download = "publicsuffixlist.update:updatePSL"
+
+[dependency-groups]
+dev = [
+    "requests",
+    "twine",
+    "wheel",
+    "pip",
+    "setuptools",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["publicsuffixlist"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/publicsuffixlist",
+    "/README.md",
+    "/LICENSE",
+]
