@@ -29,18 +29,16 @@ jobs:
         git config user.name "$USERNAME"
         git config user.email "$USEREMAIL"
 
-    - uses: actions/setup-python@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v10
       with:
-        python-version: "3.x"
-        cache: "pip"
-        cache-dependency-path: "requirements-dev.txt"
+        enable-cache: true
     
     - name: Verify the psl
       run: |
-        pip install --progress-bar off -r requirements-dev.txt 
-        pip install .
+        uv sync --locked
 
-        if ! python -m publicsuffixlist.test ; then
+        if ! uv run --frozen python -m publicsuffixlist.test ; then
           echo "Test failed. Abort."
           exit 1
         fi
@@ -66,10 +64,10 @@ jobs:
         
         sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' publicsuffixlist/__init__.py
         
-        pip install .
-        python -m build
+        uv sync --locked
+        uv build
         
-        if ! python -m publicsuffixlist.test ; then
+        if ! uv run --frozen python -m publicsuffixlist.test ; then
           echo "Test failed. Abort."
           exit 1
         fi
@@ -99,18 +97,16 @@ jobs:
         git config user.name "$USERNAME"
         git config user.email "$USEREMAIL"
 
-    - uses: actions/setup-python@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v10
       with:
-        python-version: "3.x"
-        cache: "pip"
-        cache-dependency-path: "requirements-dev.txt"
+        enable-cache: true
     
     - name: Update automation branch
       id: gennewversion
       run: |
-        pip install --progress-bar off -r requirements-dev.txt 
-        pip install .
-        python -m publicsuffixlist.update
+        uv sync --locked
+        uv run --frozen python -m publicsuffixlist.update
 
         if git diff --exit-code publicsuffixlist/public_suffix_list.dat ; then
           echo "No change in the PSL file. Skipping."
@@ -125,10 +121,10 @@ jobs:
         
         sed -ri 's/^__version__ = "[0-9\.]+\.[0-9]+"$/__version__ = "'${NEWVERSION}'"/' publicsuffixlist/__init__.py
         
-        pip install .
-        python -m build
+        uv sync --locked
+        uv build
         
-        if ! python -m publicsuffixlist.test ; then
+        if ! uv run --frozen python -m publicsuffixlist.test ; then
           echo "Test failed. Abort."
           exit 1
         fi
