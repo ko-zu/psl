@@ -363,6 +363,12 @@ example
         # invalid domain
         self.assertEqual(psl.subdomain("www..invalid", depth=1), None)
 
+    def test_subdomain_accept_unknown(self):
+        psl = PublicSuffixList(accept_unknown=False)
+        # accept_unknown must be honored per call, not only the object default.
+        self.assertEqual(psl.subdomain("www.example.unknowntld", 0, accept_unknown=True),
+                                   "example.unknowntld")
+
     def test_subdomain_keep_case(self):
         psl = self.psl
         self.assertEqual(psl.subdomain("Aaa.Www.Example.Co.Jp", depth=1, keep_case=True),

@@ -405,7 +405,7 @@ class PublicSuffixList:
             return None
         domain, labels = prepared
 
-        publen = self._countpublic(labels)
+        publen = self._countpublic(labels, accept_unknown)
         if len(labels) < publen + 1 + depth:
             return None
         else:
