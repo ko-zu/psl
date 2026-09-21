@@ -319,24 +319,24 @@ class PublicSuffixList:
 
         return self._joinlabels(domain, labels, -publen, keep_case=keep_case)
 
-    def is_private(self, domain: RelaxDomain) -> bool:
+    def is_private(self, domain: RelaxDomain, *, accept_unknown: Optional[bool] = None) -> bool:
         """ Return True if domain is private suffix or sub-domain. """
         prepared = self._preparedomain(domain)
         if prepared is None:
             return False
         domain, labels = prepared
 
-        publen = self._countpublic(labels)
+        publen = self._countpublic(labels, accept_unknown)
         return bool(publen and publen < len(labels))
 
-    def is_public(self, domain: RelaxDomain) -> bool:
+    def is_public(self, domain: RelaxDomain, *, accept_unknown: Optional[bool] = None) -> bool:
         """ Return True if domain is publix suffix. """
         prepared = self._preparedomain(domain)
         if prepared is None:
             return False
         domain, labels = prepared
 
-        publen = self._countpublic(labels)
+        publen = self._countpublic(labels, accept_unknown)
         return bool(publen and publen == len(labels))
 
     @overload

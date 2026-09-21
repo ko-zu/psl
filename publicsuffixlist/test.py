@@ -434,6 +434,14 @@ com
         self.assertEqual(psl.is_public("Example.Co.Jp"), False)
         self.assertEqual(psl.is_public("Www.Example.Co.Jp"), False)
 
+    def test_is_utilities_accept_unknown(self):
+        psl = PublicSuffixList(accept_unknown=False)
+        # accept_unknown must be honored per call, not only the object default.
+        self.assertEqual(psl.is_public("unknowntld"), False)
+        self.assertEqual(psl.is_public("unknowntld", accept_unknown=True), True)
+        self.assertEqual(psl.is_private("a.b.unknowntld", accept_unknown=True), True)
+        self.assertEqual(psl.is_private("a.b.unknowntld", accept_unknown=False), False)
+
 
 class TestPSLSections(unittest.TestCase):
 
