@@ -1,7 +1,0 @@
-requests
-twine
-wheel
-pip
-setuptools
-build
-

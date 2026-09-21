@@ -7,7 +7,7 @@ name = "publicsuffixlist"
 dynamic = ["version"]
 description = "publicsuffixlist implement"
 readme = "README.md"
-requires-python = ">=3.5"
+requires-python = ">=3.8"
 license = "MPL-2.0"
 license-files = ["LICENSE"]
 authors = [
@@ -35,10 +35,6 @@ publicsuffixlist-download = "publicsuffixlist.update:updatePSL"
 [dependency-groups]
 dev = [
     "requests",
-    "twine",
-    "wheel",
-    "pip",
-    "setuptools",
 ]
 
 [tool.hatch.version]
