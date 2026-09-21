@@ -48,17 +48,20 @@ def decode_idn(domain: AnyStr) -> str:
 
 
 class PublicSuffixList:
-    """ PublicSuffixList parser.
+    """PublicSuffixList parser.
 
     After __init__(), all instance methods become thread-safe.
     Most methods accept str (not bytes) or tuple of bytes.
     """
 
-    def __init__(self, source: Optional[RelaxFileSource] = None,
-                 accept_unknown: bool = True,
-                 accept_encoded_idn: bool = True,
-                 only_icann: bool = False):
-        """ Parse PSL source file and Return PSL object
+    def __init__(
+        self,
+        source: Optional[RelaxFileSource] = None,
+        accept_unknown: bool = True,
+        accept_encoded_idn: bool = True,
+        only_icann: bool = False,
+    ):
+        """Parse PSL source file and Return PSL object
 
         source: file (line iterable) object, or flat str to parse. (Default: built-in PSL file)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: True)
@@ -78,7 +81,7 @@ class PublicSuffixList:
             self._parse(source, accept_encoded_idn, only_icann=only_icann)
 
     def _parse(self, source, accept_encoded_idn, only_icann=False):
-        """ PSL parser core """
+        """PSL parser core"""
 
         publicsuffix = set()
         maxlabel = 0
@@ -145,8 +148,7 @@ class PublicSuffixList:
 
         elif isinstance(domain, iterable):
             domain = tuple(bytes(x) for x in domain)
-            labels = tuple(str(x, "ascii", ERRORMODE).lower()
-                           for x in domain)
+            labels = tuple(str(x, "ascii", ERRORMODE).lower() for x in domain)
         else:
             raise TypeError("Only str, Iter[ByteString] are supported.")
 
@@ -220,43 +222,39 @@ class PublicSuffixList:
         return 0
 
     @overload
-    def suffix(self,
-               domain: str,
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[str]: ...
+    def suffix(
+        self, domain: str, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[str]: ...
     @overload
-    def suffix(self,
-               domain: Union[BytesTuple, Iterable[ByteString]],
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[BytesTuple]: ...
-    def suffix(self,
-               domain: RelaxDomain,
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[Domain]:
-        """ Alias for privatesuffix """
+    def suffix(
+        self,
+        domain: Union[BytesTuple, Iterable[ByteString]],
+        accept_unknown: Optional[bool] = None,
+        *,
+        keep_case: bool = False,
+    ) -> Optional[BytesTuple]: ...
+    def suffix(
+        self, domain: RelaxDomain, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[Domain]:
+        """Alias for privatesuffix"""
         return self.privatesuffix(domain, accept_unknown=accept_unknown, keep_case=keep_case)
 
     @overload
-    def privatesuffix(self,
-               domain: str,
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[str]: ...
+    def privatesuffix(
+        self, domain: str, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[str]: ...
     @overload
-    def privatesuffix(self,
-               domain: Union[BytesTuple, Iterable[ByteString]],
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[BytesTuple]: ...
-    def privatesuffix(self,
-                      domain: RelaxDomain,
-                      accept_unknown: Optional[bool] = None,
-                      *,
-                      keep_case: bool = False) -> Optional[Domain]:
-        """ Return shortest suffix assigned for an individual.
+    def privatesuffix(
+        self,
+        domain: Union[BytesTuple, Iterable[ByteString]],
+        accept_unknown: Optional[bool] = None,
+        *,
+        keep_case: bool = False,
+    ) -> Optional[BytesTuple]: ...
+    def privatesuffix(
+        self, domain: RelaxDomain, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[Domain]:
+        """Return shortest suffix assigned for an individual.
 
         domain: str or unicode to parse. (Required)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
@@ -280,23 +278,21 @@ class PublicSuffixList:
         return self._joinlabels(domain, labels, -(publen + 1), keep_case=keep_case)
 
     @overload
-    def publicsuffix(self,
-               domain: str,
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[str]: ...
+    def publicsuffix(
+        self, domain: str, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[str]: ...
     @overload
-    def publicsuffix(self,
-               domain: Union[BytesTuple, Iterable[ByteString]],
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[BytesTuple]: ...
-    def publicsuffix(self,
-                     domain: RelaxDomain,
-                     accept_unknown: Optional[bool] = None,
-                     *,
-                     keep_case: bool = False) -> Optional[Domain]:
-        """ Return longest publically shared suffix.
+    def publicsuffix(
+        self,
+        domain: Union[BytesTuple, Iterable[ByteString]],
+        accept_unknown: Optional[bool] = None,
+        *,
+        keep_case: bool = False,
+    ) -> Optional[BytesTuple]: ...
+    def publicsuffix(
+        self, domain: RelaxDomain, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[Domain]:
+        """Return longest publically shared suffix.
 
         domain: str or unicode to parse. (Required)
         accept_unknown: bool, assume unknown TLDs to be public suffix. (Default: object default)
@@ -320,7 +316,7 @@ class PublicSuffixList:
         return self._joinlabels(domain, labels, -publen, keep_case=keep_case)
 
     def is_private(self, domain: RelaxDomain, *, accept_unknown: Optional[bool] = None) -> bool:
-        """ Return True if domain is private suffix or sub-domain. """
+        """Return True if domain is private suffix or sub-domain."""
         prepared = self._preparedomain(domain)
         if prepared is None:
             return False
@@ -330,7 +326,7 @@ class PublicSuffixList:
         return bool(publen and publen < len(labels))
 
     def is_public(self, domain: RelaxDomain, *, accept_unknown: Optional[bool] = None) -> bool:
-        """ Return True if domain is publix suffix. """
+        """Return True if domain is publix suffix."""
         prepared = self._preparedomain(domain)
         if prepared is None:
             return False
@@ -340,23 +336,21 @@ class PublicSuffixList:
         return bool(publen and publen == len(labels))
 
     @overload
-    def privateparts(self,
-               domain: str,
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[Tuple[str, ...]]: ...
+    def privateparts(
+        self, domain: str, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[Tuple[str, ...]]: ...
     @overload
-    def privateparts(self,
-               domain: Union[BytesTuple, Iterable[ByteString]],
-               accept_unknown: Optional[bool] = None,
-               *,
-               keep_case: bool = False) -> Optional[Tuple[BytesTuple, ...]]: ...
-    def privateparts(self,
-                     domain: RelaxDomain,
-                     accept_unknown: Optional[bool] = None,
-                     *,
-                     keep_case: bool = False) -> Optional[Tuple[Domain, ...]]:
-        """ Return tuple of subdomain labels and the private suffix. """
+    def privateparts(
+        self,
+        domain: Union[BytesTuple, Iterable[ByteString]],
+        accept_unknown: Optional[bool] = None,
+        *,
+        keep_case: bool = False,
+    ) -> Optional[Tuple[BytesTuple, ...]]: ...
+    def privateparts(
+        self, domain: RelaxDomain, accept_unknown: Optional[bool] = None, *, keep_case: bool = False
+    ) -> Optional[Tuple[Domain, ...]]:
+        """Return tuple of subdomain labels and the private suffix."""
         prepared = self._preparedomain(domain)
         if prepared is None:
             return None
@@ -366,40 +360,35 @@ class PublicSuffixList:
         if not publen or len(labels) < publen + 1:
             return None
 
-        priv = self._joinlabels(
-            domain, labels, -(publen+1), keep_case=keep_case)
+        priv = self._joinlabels(domain, labels, -(publen + 1), keep_case=keep_case)
         if isinstance(domain, str):
             if keep_case:
-                return tuple(domain.split(".")[:-(publen+1)]) + (priv,)
+                return tuple(domain.split(".")[: -(publen + 1)]) + (priv,)
             else:
-                return tuple(labels[:-(publen+1)]) + (priv,)
+                return tuple(labels[: -(publen + 1)]) + (priv,)
         else:
             if keep_case:
-                return tuple(domain[:-(publen+1)]) + (priv,)
+                return tuple(domain[: -(publen + 1)]) + (priv,)
             else:
-                return tuple(x.lower() for x in domain[:-(publen+1)]) + (priv,)
+                return tuple(x.lower() for x in domain[: -(publen + 1)]) + (priv,)
 
     @overload
-    def subdomain(self,
-               domain: str,
-               depth: int,
-               *,
-               accept_unknown: Optional[bool] = None,
-               keep_case: bool = False) -> Optional[str]: ...
+    def subdomain(
+        self, domain: str, depth: int, *, accept_unknown: Optional[bool] = None, keep_case: bool = False
+    ) -> Optional[str]: ...
     @overload
-    def subdomain(self,
-               domain: Union[BytesTuple, Iterable[ByteString]],
-               depth: int,
-               *,
-               accept_unknown: Optional[bool] = None,
-               keep_case: bool = False) -> Optional[BytesTuple]: ...
-    def subdomain(self,
-                  domain: RelaxDomain,
-                  depth: int,
-                  *,
-                  accept_unknown: Optional[bool] = None,
-                  keep_case: bool = False) -> Optional[Domain]:
-        """ Return so-called subdomain of specified depth in the private suffix. """
+    def subdomain(
+        self,
+        domain: Union[BytesTuple, Iterable[ByteString]],
+        depth: int,
+        *,
+        accept_unknown: Optional[bool] = None,
+        keep_case: bool = False,
+    ) -> Optional[BytesTuple]: ...
+    def subdomain(
+        self, domain: RelaxDomain, depth: int, *, accept_unknown: Optional[bool] = None, keep_case: bool = False
+    ) -> Optional[Domain]:
+        """Return so-called subdomain of specified depth in the private suffix."""
         prepared = self._preparedomain(domain)
         if prepared is None:
             return None
