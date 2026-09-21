@@ -11,11 +11,6 @@ from email.utils import parsedate
 
 from publicsuffixlist import PSLFILE, PSLURL, PublicSuffixList
 
-try:
-    import requests
-except ImportError:
-    requests = None
-
 
 def updatePSL(psl_file=PSLFILE):
     """ Updates a local copy of PSL file
@@ -25,7 +20,9 @@ def updatePSL(psl_file=PSLFILE):
     print("This is a script to download the latest PSL file.")
     print("Do not run this repeatedly more than once per day.")
 
-    if requests is None:
+    try:
+        import requests
+    except ImportError:
         raise Exception("Please install python-requests http(s) library. $ sudo pip install requests")
 
     r = requests.get(PSLURL)
