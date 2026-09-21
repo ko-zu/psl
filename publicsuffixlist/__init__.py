@@ -130,7 +130,7 @@ class PublicSuffixList:
             else:
                 return tuple(x.lower() for x in domain[start:])
 
-    def _preparedomain(self, domain) -> Union[Tuple[str, Labels], Tuple[BytesTuple, Labels]]:
+    def _preparedomain(self, domain) -> Optional[Tuple[Union[str, BytesTuple], Labels]]:
 
         if isinstance(domain, str):
             # From PSL definition,
@@ -152,7 +152,7 @@ class PublicSuffixList:
 
         if "" in labels:
             # not a valid domain
-            return None, None
+            return None
         return domain, labels
 
     def _countpublic(self, labels, accept_unknown=None) -> int:
@@ -267,7 +267,11 @@ class PublicSuffixList:
         Return in tuple of bytes if domain is tuple (or list) of bytes.
         """
 
-        domain, labels = self._preparedomain(domain)
+        prepared = self._preparedomain(domain)
+        if prepared is None:
+            return None
+        domain, labels = prepared
+
         publen = self._countpublic(labels, accept_unknown)
 
         if not publen or len(labels) < publen + 1:
@@ -303,7 +307,11 @@ class PublicSuffixList:
         Return in tuple of bytes if domain is tuple (or list) of bytes.
         """
 
-        domain, labels = self._preparedomain(domain)
+        prepared = self._preparedomain(domain)
+        if prepared is None:
+            return None
+        domain, labels = prepared
+
         publen = self._countpublic(labels, accept_unknown)
 
         if not publen or len(labels) < publen:
@@ -313,13 +321,21 @@ class PublicSuffixList:
 
     def is_private(self, domain: RelaxDomain) -> bool:
         """ Return True if domain is private suffix or sub-domain. """
-        domain, labels = self._preparedomain(domain)
+        prepared = self._preparedomain(domain)
+        if prepared is None:
+            return False
+        domain, labels = prepared
+
         publen = self._countpublic(labels)
         return bool(publen and publen < len(labels))
 
     def is_public(self, domain: RelaxDomain) -> bool:
         """ Return True if domain is publix suffix. """
-        domain, labels = self._preparedomain(domain)
+        prepared = self._preparedomain(domain)
+        if prepared is None:
+            return False
+        domain, labels = prepared
+
         publen = self._countpublic(labels)
         return bool(publen and publen == len(labels))
 
