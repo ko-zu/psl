@@ -353,11 +353,15 @@ class PublicSuffixList:
                keep_case: bool = False) -> Optional[Tuple[BytesTuple, ...]]: ...
     def privateparts(self,
                      domain: RelaxDomain,
-                     *,
                      accept_unknown: Optional[bool] = None,
+                     *,
                      keep_case: bool = False) -> Optional[Tuple[Domain, ...]]:
         """ Return tuple of subdomain labels and the private suffix. """
-        domain, labels = self._preparedomain(domain)
+        prepared = self._preparedomain(domain)
+        if prepared is None:
+            return None
+        domain, labels = prepared
+
         publen = self._countpublic(labels, accept_unknown)
         if not publen or len(labels) < publen + 1:
             return None

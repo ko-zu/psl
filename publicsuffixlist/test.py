@@ -76,6 +76,8 @@ class TestPSL(unittest.TestCase):
         self.assertEqual(self.psl.suffix(""), None)
         self.assertEqual(self.psl.publicsuffix("www..invalid"), None)
         self.assertEqual(self.psl.publicsuffix(""), None)
+        self.assertEqual(self.psl.privateparts("www..invalid"), None)
+        self.assertEqual(self.psl.privateparts(""), None)
 
     def test_ignored_trailing_dot(self):
         self.assertEqual(self.psl.suffix("example.com."), "example.com")
