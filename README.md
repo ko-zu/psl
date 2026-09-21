@@ -2,11 +2,11 @@ publicsuffixlist
 ===
 
 [Public Suffix List](https://publicsuffix.org/) parser implementation for
-Python 3.5+.
+Python 3.8+.
 
 - Compliant with [TEST DATA](https://raw.githubusercontent.com/publicsuffix/list/master/tests/test_psl.txt).
 - Supports IDN (unicode and punycoded).
-- Supports Python3.5+.
+- Supports Python3.8+.
 - Shipped with built-in PSL and an updater script.
 - Written in Pure Python with no library dependencies.
 
@@ -137,6 +137,9 @@ release date. For example, `0.10.1.20230331` indicates a release date of March
 This package dropped support for Python 2.7 and Python 3.4 or prior versions at
 the version 1.0.0 release in June 2024. The last version that works on Python
 2.x is 0.10.0.x.
+
+This package dropped support for Python 3.5, 3.6 and 3.7 at the version 1.1.0
+release. It now requires Python 3.8 or later.
 
 
 Source / Link
