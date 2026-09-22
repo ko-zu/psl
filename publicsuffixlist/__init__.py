@@ -12,7 +12,7 @@ from typing import Iterable, Optional, Tuple, Union, overload
 
 __all__ = ["PublicSuffixList"]
 
-__version__ = "1.0.2"
+__version__ = "1.1.0"
 
 ENCODING = "utf8"
 ERRORMODE = "surrogateescape"

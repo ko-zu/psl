@@ -1,3 +1,22 @@
+### 1.1.0 (2026-10-10)
+
+This version drops support for Python 3.5, 3.6 and 3.7, and now requires
+Python 3.8 or later.
+
+Packaging has been migrated to PEP 621 metadata in `pyproject.toml` using
+hatchling, replacing `setup.py`, `setup.cfg` and `MANIFEST.in`. The version is
+now read from `publicsuffixlist.__version__`, and development dependencies are
+locked with uv.
+
+- Add PEP 561 `py.typed` marker and complete type annotations for the public
+  API, including `compat` and the update script.
+- Add an `accept_unknown` keyword argument to `is_private()` and `is_public()`.
+- Fix `subdomain()` to honor the per-call `accept_unknown` argument, and to
+  return `None` for invalid domains instead of raising `TypeError`.
+- Correct the `subdomain()` and `privateparts()` overload signatures.
+- Handle a malformed `Last-Modified` response header in the update script.
+- Run tests with uv on Python 3.8 and 3.14, and update CI actions.
+
 ### 1.0.2 (2024-07-13)
 - Use @typing.overload to indicate str-to-str domain input/output. #32.
 - Address deprecation of ByteString in python 3.14.
