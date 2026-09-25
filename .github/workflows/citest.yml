@@ -25,3 +25,9 @@ jobs:
         run: |
           uv sync --locked
           uv run --frozen python -m publicsuffixlist.test
+      - name: Run linters
+        if: matrix.python-version == '3'
+        run: |
+          uv run --frozen ruff check .
+          uv run --frozen ruff format --check .
+          uv run --frozen mypy
