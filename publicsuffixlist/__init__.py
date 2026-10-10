@@ -326,7 +326,7 @@ class PublicSuffixList:
         return bool(publen and publen < len(labels))
 
     def is_public(self, domain: RelaxDomain, *, accept_unknown: Optional[bool] = None) -> bool:
-        """Return True if domain is publix suffix."""
+        """Return True if domain is public suffix."""
         prepared = self._preparedomain(domain)
         if prepared is None:
             return False
