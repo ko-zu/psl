@@ -5,8 +5,8 @@
 // Please pull this list from, and only from https://publicsuffix.org/list/public_suffix_list.dat,
 // rather than any other VCS sites. Pulling from any other URL is not guaranteed to be supported.
 
-// VERSION: 2026-10-16_23-32-13_UTC
-// COMMIT: 2dbfce14c57bcea83fef2be3bdcb560667d7ef93
+// VERSION: 2026-10-17_18-52-06_UTC
+// COMMIT: 52b71b3c4576ff77450cc7ebcfc7f34a916af3f9
 
 // Instructions on pulling and using this list can be found at https://publicsuffix.org/list/.
 
@@ -13841,7 +13841,6 @@ gitlab.io
 
 // Gitplac.si : https://gitplac.si
 // Submitted by Aljaž Starc <me@aljaxus.eu>
-gitapp.si
 gitpage.si
 
 // Glide : https://www.glideapps.com
