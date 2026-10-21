@@ -1,10 +1,11 @@
-### 1.1.1 (2026-10-21)
+### 1.1.1, 1.1.2 (2026-10-21)
 
 No code changes. This release only refreshes CI and development tooling.
 
 - Update `astral-sh/setup-uv` to v10.3.0 in the GitHub Actions workflows.
 - Refresh `uv.lock`, updating `certifi` to pick up the bundled CA certificate
   changes.
+- Fix the auto-release workflow so that it no longer bundles a stale PSL file.
 
 ### 1.1.0 (2026-10-10)
 
