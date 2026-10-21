@@ -1,3 +1,11 @@
+### 1.1.1 (2026-10-21)
+
+No code changes. This release only refreshes CI and development tooling.
+
+- Update `astral-sh/setup-uv` to v10.3.0 in the GitHub Actions workflows.
+- Refresh `uv.lock`, updating `certifi` to pick up the bundled CA certificate
+  changes.
+
 ### 1.1.0 (2026-10-10)
 
 This version drops support for Python 3.5, 3.6 and 3.7, and now requires
