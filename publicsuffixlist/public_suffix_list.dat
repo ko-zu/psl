@@ -5,8 +5,8 @@
 // Please pull this list from, and only from https://publicsuffix.org/list/public_suffix_list.dat,
 // rather than any other VCS sites. Pulling from any other URL is not guaranteed to be supported.
 
-// VERSION: 2026-11-25_10-02-46_UTC
-// COMMIT: 8727c5c7a529cca5c232adc45acc7b7e26742b57
+// VERSION: 2026-11-26_18-39-01_UTC
+// COMMIT: 88b076a1fb2ae58cd2a6959d570f075e04d21867
 
 // Instructions on pulling and using this list can be found at https://publicsuffix.org/list/.
 
@@ -12601,6 +12601,10 @@ square.site
 // Submitted by Joshua Weiss <admin.engineering@bluebite.com>
 bluebite.io
 
+// Bonto : https://bonto.dev
+// Submitted by Sidequest Ltd <bonto@sidequestvr.com>
+bonto.page
+
 // Boomla : https://boomla.com
 // Submitted by Tibor Halter <thalter@boomla.com>
 boomla.net
@@ -13860,6 +13864,10 @@ wien.funkfeuer.at
 // Submitted by Aether <furry@org.digital>
 xwx.me
 
+// FuseBase : https://thefusebase.com/
+// Submitted by FuseBase <contact@thefusebase.com>
+fusebase.site
+
 // Future Versatile Group. : https://www.fvg-on.net/
 // T.Kabu <webmaster@fvg-on.net>
 daemon.asia
@@ -14640,10 +14648,6 @@ leadpages.co
 lpages.co
 lpusercontent.com
 
-// Leapcell : https://leapcell.io/
-// Submitted by Leapcell Team <support@leapcell.io>
-leapcell.app
-
 // Liara : https://liara.ir
 // Submitted by Amirhossein Badinloo <info@liara.ir>
 liara.run
@@ -14862,6 +14866,11 @@ apps.fbsbx.com
 custom.metacentrum.cz
 flt.cloud.muni.cz
 usr.cloud.muni.cz
+
+// MetaGPT LLC : https://atoms.dev/
+// Submitted by Atoms IT <it@fuzhi.ai>
+atoms.world
+pub.atoms.world
 
 // Meteor Development Group : https://www.meteor.com/hosting
 // Submitted by Pierre Carrier <pierre@meteor.com>
@@ -15523,6 +15532,10 @@ mypep.link
 // Submitted by Alec Xiang <security@perplexity.ai>
 pplx.app
 
+// Phron : https://phron.net
+// Submitted by Phron Security <security@phron.net>
+phronusercontent.com
+
 // Ping Identity : https://www.pingidentity.com
 // Submitted by Ping Identity <security@pingidentity.com>
 forgeblocks.com
@@ -15618,6 +15631,12 @@ e.id
 // Submitted by Yaacov Akiba Slama <admin@chirurgiens-dentistes-en-france.fr>
 chirurgiens-dentistes-en-france.fr
 byen.site
+
+// PublicFreeSuffix : https://publicfreesuffix.org
+// Submitted by Ethan Walker <contact@fs5.net>
+fs.kg
+bg5.net
+is-a.si
 
 // PublicZone : https://publiczone.org/
 // Submitted by PublicZone NOC Team <noc@publiczone.org>
@@ -15751,6 +15770,10 @@ instances.spawn.cc
 reliantlabs.dev
 sites.reliantlabs.dev
 reliantpreview.dev
+
+// Relume : https://www.relume.ai/
+// Submitted by Relume Security Team <security@relume.ai>
+relumesite.ai
 
 // Render : https://render.com
 // Submitted by Anurag Goel <dev@render.com>
@@ -16139,6 +16162,10 @@ streamlitapp.com
 // Submitted by Ian Streeter <ian@snowplowanalytics.com>
 try-snowplow.com
 
+// Softr : https://www.softr.io/
+// Submitted by Softr Support <support@softr.io>
+softr.app
+
 // Software Consulting Michal Zalewski : https://www.mafelo.com
 // Submitted by Michal Zalewski <security@mafelo.com>
 mafelo.net
@@ -16186,6 +16213,10 @@ spawnbase.app
 // SpeedPartner GmbH : https://www.speedpartner.de/
 // Submitted by Stefan Neufeind <info@speedpartner.de>
 customer.speedpartner.de
+
+// Spheron : https://www.spheron.ai
+// Submitted by Spheron Team <info@spheron.ai>
+spheron.live
 
 // Spreadshop (sprd.net AG) : https://www.spreadshop.com/
 // Submitted by Martin Breest <security@spreadshop.com>
@@ -16239,6 +16270,10 @@ indevs.in
 musician.io
 novecore.site
 
+// Static.run : https://static.run
+// Submitted by Static.run <security@static.run>
+staticrun.app
+
 // statichost.eu : https://www.statichost.eu
 // Submitted by Eric Selin <admin@statichost.eu>
 statichost.page
@@ -16276,6 +16311,10 @@ vps-host.net
 atl.jelastic.vps-host.net
 njs.jelastic.vps-host.net
 ric.jelastic.vps-host.net
+
+// Strawberry Browser Inc. : https://strawberrybrowser.com/
+// Submitted by Hannes Fant <security@strawberrybrowser.com>
+strw.app
 
 // Streak : https://streak.com
 // Submitted by Blake Kadatz <eng@streak.com>
@@ -16736,6 +16775,12 @@ js.wpenginepowered.com
 // Submitted by Julian Uphoff <publicsuffixlist@xenoncloud.net>
 *.xenonconnect.de
 half.host
+
+// xPort : https://xport.dev
+// Submitted by Sascha Klein <security@xport.dev>
+xport.free
+xport.host
+xport.sh
 
 // XS4ALL Internet bv : https://www.xs4all.nl/
 // Submitted by Daniel Mostertman <unixbeheer+publicsuffix@xs4all.net>
